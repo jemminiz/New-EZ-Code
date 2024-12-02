@@ -5,6 +5,7 @@
 #include "intake.hpp"
 #include "clamp.hpp"
 #include "lady_brown.hpp"
+#include "pros/adi.hpp"
 
 namespace StratusQuo
 {
@@ -18,5 +19,6 @@ namespace StratusQuo
         450);   // Wheel RPM
     inline Intake intake(intake_motor_port, pto_motor_port, pto_port);
     inline Clamp clamp(clamp_port);
-    inline Lady_Brown lady_brown(lady_brown_port, lady_brown_piston_port);
+    inline Lady_Brown lady_brown(left_lb_port, right_lb_port, lady_brown_piston_port, left_side_pto, right_side_pto);
+    inline pros::adi::DigitalIn limit_switch(limit_switch_port);
 };

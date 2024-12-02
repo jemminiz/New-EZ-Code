@@ -8,7 +8,8 @@ namespace StratusQuo
     {
         public:
             Clamp(uint8_t port);
-            bool toggle();
+            int toggle(int toggle);
+            int set(bool value);
         private:
             ez::Piston _piston;
     };

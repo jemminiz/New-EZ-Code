@@ -1,4 +1,46 @@
 #include "main.h"
+#include "pros/misc.h"
+#include "subsystems.hpp"
+
+// User Tasks
+pros::Task drive_task([]()
+{
+  uint32_t _time_ = pros::millis();
+  StratusQuo::chassis.opcontrol_tank();
+  StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, StratusQuo::lady_brown.get_pto());
+  
+  pros::Task::delay_until(&_time_, 10);
+});
+pros::Task intake_task([]()
+{
+  uint32_t _time_ = pros::millis();
+  if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) StratusQuo::intake.move(127);
+  else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))StratusQuo::intake.move(-127);
+  else StratusQuo::intake.brake();
+
+  if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) StratusQuo::intake.toggle();
+
+  pros::Task::delay_until(&_time_, 10);
+});
+pros::Task lb_task([]()
+{
+  uint32_t _time_ = pros::millis();
+  // Only move if motor is on lady brown!
+  if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.move(127);
+  else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.move(-127);
+  else if(StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.brake();
+
+  pros::Task::delay_until(&_time_, 10);
+});
+pros::Task clamp_task([]()
+{
+  uint32_t _time_ = pros::millis();
+  if(StratusQuo::limit_switch.get_new_press()) StratusQuo::clamp.set(true);
+  StratusQuo::clamp.toggle(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
+
+  pros::Task::delay_until(&_time_, 10);
+});
+
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -44,6 +86,10 @@ void initialize() {
   // Initialize StratusQuo::chassis and auton selector
   StratusQuo::chassis.initialize();
   ez::as::initialize();
+  drive_task.suspend();
+  intake_task.suspend();
+  lb_task.suspend();
+  clamp_task.suspend();
   master.rumble(".");
 }
 
@@ -107,6 +153,11 @@ void opcontrol() {
   pros::motor_brake_mode_e_t driver_preference_brake = MOTOR_BRAKE_COAST;
 
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
+
+  drive_task.resume();
+  intake_task.resume();
+  lb_task.resume();
+  clamp_task.resume();
 
   while (true) {
     // PID Tuner
