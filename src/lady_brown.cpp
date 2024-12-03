@@ -1,8 +1,7 @@
 #include "lady_brown.hpp"
 
-StratusQuo::Lady_Brown::Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t left_pto_port, uint8_t right_pto_port) :
-_left_motor(left_motor_port), _right_motor(right_motor_port), _piston(piston_port), _left_side_pto(left_pto_port, true),
-_right_side_pto(right_pto_port, true)
+StratusQuo::Lady_Brown::Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t pto_port) :
+_left_motor(left_motor_port), _right_motor(right_motor_port), _piston(piston_port), _pto(pto_port, false)
 {}
 
 int StratusQuo::Lady_Brown::move(int voltage)
@@ -37,20 +36,14 @@ int StratusQuo::Lady_Brown::brake()
 }
 
 // PTO Logic
-int StratusQuo::Lady_Brown::_set_left_side_pto(bool input)
+int StratusQuo::Lady_Brown::set_pto(bool input)
 {
-    _left_side_pto.set(input);
-    return 0;
-}
-int StratusQuo::Lady_Brown::_set_right_side_pto(bool input)
-{
-    _right_side_pto.set(input);
+    // intent - true == lb
+    _pto.set(!input); // Check logic - should work?
     return 0;
 }
 
-bool StratusQuo::Lady_Brown::get_pto()
+bool StratusQuo::Lady_Brown::is_pto()
 {
-    if(_right_side_pto.get() == _left_side_pto.get())
-        return _right_side_pto.get();
-    return false;
+    return !_pto.get(); // I think this is right I'm not even sure
 }

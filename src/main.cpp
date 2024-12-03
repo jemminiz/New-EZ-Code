@@ -1,46 +1,33 @@
 #include "main.h"
+
 #include "pros/misc.h"
 #include "subsystems.hpp"
 
+bool pto_enabled = false;
+bool limit_switch_pressed = false;
 // User Tasks
-pros::Task drive_task([]()
-{
-  uint32_t _time_ = pros::millis();
-  StratusQuo::chassis.opcontrol_tank();
-  StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, StratusQuo::lady_brown.get_pto());
-  
-  pros::Task::delay_until(&_time_, 10);
-});
-pros::Task intake_task([]()
-{
-  uint32_t _time_ = pros::millis();
-  if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) StratusQuo::intake.move(127);
-  else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))StratusQuo::intake.move(-127);
-  else StratusQuo::intake.brake();
-
-  if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) StratusQuo::intake.toggle();
-
-  pros::Task::delay_until(&_time_, 10);
-});
-pros::Task lb_task([]()
-{
-  uint32_t _time_ = pros::millis();
+pros::Task lb_task([]() {
   // Only move if motor is on lady brown!
-  if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.move(127);
-  else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) && StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.move(-127);
-  else if(StratusQuo::lady_brown.get_pto()) StratusQuo::lady_brown.brake();
+  if(pto_enabled)
+  {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+    {
+      StratusQuo::lady_brown.move(127);
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+      StratusQuo::lady_brown.move(-127);
+    else
+      StratusQuo::lady_brown.brake();
+  }
 
-  pros::Task::delay_until(&_time_, 10);
+  pros::delay(100);
 });
-pros::Task clamp_task([]()
-{
-  uint32_t _time_ = pros::millis();
-  if(StratusQuo::limit_switch.get_new_press()) StratusQuo::clamp.set(true);
+pros::Task clamp_task([]() {
   StratusQuo::clamp.toggle(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
+  if(limit_switch_pressed) StratusQuo::clamp.set(true);
 
-  pros::Task::delay_until(&_time_, 10);
+  pros::delay(100);
 });
-
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -70,26 +57,26 @@ void initialize() {
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // StratusQuo::chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // StratusQuo::chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
-/*
-  // Autonomous Selector using LLEMU
-  ez::as::auton_selector.autons_add({
-      Auton("Example Drive\n\nDrive forward and come back.", drive_example),
-      Auton("Example Turn\n\nTurn 3 times.", turn_example),
-      Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
-      Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
-      Auton("Swing Example\n\nSwing in an 'S' curve", swing_example),
-      Auton("Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining),
-      Auton("Combine all 3 movements", combining_movements),
-      Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
-  });
-*/
+  /*
+    // Autonomous Selector using LLEMU
+    ez::as::auton_selector.autons_add({
+        Auton("Example Drive\n\nDrive forward and come back.", drive_example),
+        Auton("Example Turn\n\nTurn 3 times.", turn_example),
+        Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
+        Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
+        Auton("Swing Example\n\nSwing in an 'S' curve", swing_example),
+        Auton("Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining),
+        Auton("Combine all 3 movements", combining_movements),
+        Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
+    });
+  */
   // Initialize StratusQuo::chassis and auton selector
   StratusQuo::chassis.initialize();
   ez::as::initialize();
-  drive_task.suspend();
-  intake_task.suspend();
-  lb_task.suspend();
-  clamp_task.suspend();
+  // drive_task.suspend();
+  // intake_task.suspend();
+  // lb_task.suspend();
+  // clamp_task.suspend();
   master.rumble(".");
 }
 
@@ -154,8 +141,6 @@ void opcontrol() {
 
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
 
-  drive_task.resume();
-  intake_task.resume();
   lb_task.resume();
   clamp_task.resume();
 
@@ -180,6 +165,9 @@ void opcontrol() {
     }
 
     StratusQuo::chassis.opcontrol_tank();  // Tank control
+    StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
+
+    limit_switch_pressed = StratusQuo::chassis.left_limit_switch.get_new_press() && StratusQuo::chassis.right_limit_switch.get_new_press();
     // StratusQuo::chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // StratusQuo::chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // StratusQuo::chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade

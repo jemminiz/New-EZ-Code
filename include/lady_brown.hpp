@@ -7,26 +7,31 @@ namespace StratusQuo
     class Lady_Brown
     {
         public:
-            Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t left_pto_port, uint8_t right_pto_port);
+            Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t pto_port);
             int move(int voltage);
             int toggle();
             int set_load_state(bool state);
             bool get_load_state();
             int brake();
             
-            // PTO Logic
+            
+        // PTO Logic
+
+            /* sets pto values
+             * @param input 
+             * true to activate lady brown, false to activate drivetrain
+             */
             int set_pto(bool input);
-            bool get_pto();
+
+            // returns true if lb is active
+            bool is_pto();
         private:
             pros::Motor _left_motor;
             pros::Motor _right_motor;
             ez::Piston _piston;
 
             // PTO Logic
-            int _set_left_side_pto(bool input);
-            int _set_right_side_pto(bool input);
-            ez::Piston _left_side_pto;
-            ez::Piston _right_side_pto;
-            bool _pto_state; // If true, LB is PTO'd, otherwise it's DT
+            ez::Piston _pto;
+            bool _pto_state; // true == dt, false == lb
     };
 }
