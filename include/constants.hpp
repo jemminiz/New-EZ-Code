@@ -3,8 +3,8 @@
 #include <cstdint>
 namespace StratusQuo
 {
-    const int intake_motor_port = 7;
-    const int pto_motor_port = 10;
+    const int bottom_intake_port = 15;
+    const int top_intake_port = 12;
     const int left_lb_port = 13;
     const int right_lb_port = 20;
     const uint8_t intake_piston_port = 'e';
@@ -13,4 +13,5 @@ namespace StratusQuo
     const uint8_t pto = 'g';
     const uint8_t left_ls_port = 'a';
     const uint8_t right_ls_port = 'b';
+    const uint8_t doinker_port = 'd';
 }
