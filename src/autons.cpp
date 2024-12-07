@@ -16,7 +16,7 @@ const int SWING_SPEED = 90;
 ///
 void default_constants() {
   StratusQuo::chassis.pid_heading_constants_set(11, 0, 20);
-  StratusQuo::chassis.pid_drive_constants_set(20, 0, 100);
+  StratusQuo::chassis.pid_drive_constants_set(26, 0, 300);
   StratusQuo::chassis.pid_turn_constants_set(3, 0.05, 20, 15);
   StratusQuo::chassis.pid_swing_constants_set(6, 0, 65);
 

@@ -51,10 +51,6 @@ void initialize() {
   // Initialize StratusQuo::chassis and auton selector
   StratusQuo::chassis.initialize();
   ez::as::initialize();
-  // drive_task.suspend();
-  // intake_task.suspend();
-  // lb_task.suspend();
-  // clamp_task.suspend();
   master.rumble(".");
 }
 
@@ -148,7 +144,7 @@ void opcontrol() {
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
 
-    limit_switch_pressed = StratusQuo::chassis.left_limit_switch.get_new_press() && StratusQuo::chassis.right_limit_switch.get_new_press();
+    limit_switch_pressed = StratusQuo::left_limit_switch.get_value() && StratusQuo::right_limit_switch.get_value();
     // ///StratusQuo::chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // StratusQuo::chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // StratusQuo::chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
