@@ -7,7 +7,7 @@ namespace StratusQuo
     class Lady_Brown
     {
         public:
-            Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t pto_port);
+            Lady_Brown(int left_motor_port, int right_motor_port, int rotation_port, uint8_t piston_port, uint8_t pto_port);
             int move(int voltage);
             int toggle();
             int set_load_state(bool state);
@@ -29,6 +29,7 @@ namespace StratusQuo
             pros::Motor _left_motor;
             pros::Motor _right_motor;
             ez::Piston _piston;
+            pros::Rotation _rotation_sensor;
 
             // PTO Logic
             ez::Piston _pto;

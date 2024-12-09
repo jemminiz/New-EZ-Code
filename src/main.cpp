@@ -165,6 +165,14 @@ void opcontrol() {
       else
         StratusQuo::lady_brown.brake();
     }
+    else
+    {
+      // Drivetrain working as it should I think?
+    }
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
+    {
+      pto_enabled = !pto_enabled;
+    }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
     {
@@ -175,6 +183,11 @@ void opcontrol() {
       StratusQuo::intake.move(-127);
     }
     else StratusQuo::intake.brake();
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
+    {
+      StratusQuo::lady_brown.toggle();
+    }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::clamp.toggle();
 

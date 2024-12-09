@@ -1,7 +1,8 @@
 #include "lady_brown.hpp"
 
-StratusQuo::Lady_Brown::Lady_Brown(int left_motor_port, int right_motor_port, uint8_t piston_port, uint8_t pto_port) :
-_left_motor(left_motor_port), _right_motor(right_motor_port), _piston(piston_port), _pto(pto_port, false)
+StratusQuo::Lady_Brown::Lady_Brown(int left_motor_port, int right_motor_port, int rotation_port, uint8_t piston_port, uint8_t pto_port) :
+_left_motor(left_motor_port), _right_motor(right_motor_port), _rotation_sensor(rotation_port),
+_piston(piston_port), _pto(pto_port, false)
 {}
 
 int StratusQuo::Lady_Brown::move(int voltage)
