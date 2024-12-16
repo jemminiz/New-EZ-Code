@@ -7,7 +7,7 @@ _piston(piston_port), _pto(pto_port, false)
 
 int StratusQuo::Lady_Brown::move(int voltage)
 {
-    _left_motor.move(voltage);
+    _left_motor.move(-voltage);
     _right_motor.move(voltage);
     return 0;
 }

@@ -20,8 +20,9 @@ namespace StratusQuo
 
     inline Intake intake(bottom_intake_port, top_intake_port, intake_piston_port);
     inline Clamp clamp(clamp_port);
-    inline Lady_Brown lady_brown(left_lb_port, right_lb_port, lb_rotation_port, lady_brown_piston_port, pto);
+    inline Lady_Brown lady_brown(left_lb_port, right_lb_port, lb_rotation_port,
+                                 lady_brown_piston_port, pto);
+    inline ez::Piston doinker(doinker_port);
     inline pros::adi::DigitalIn left_limit_switch(left_ls_port);
     inline pros::adi::DigitalIn right_limit_switch(left_ls_port);
-    //inline pros::adi::DigitalIn limit_switch(limit_switch_port);
 };

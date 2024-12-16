@@ -12,7 +12,7 @@ namespace StratusQuo
     const uint8_t clamp_port = 'h';
     const uint8_t lady_brown_piston_port = 'f';
     const uint8_t pto = 'g';
-    const uint8_t left_ls_port = 'a';
+    const uint8_t left_ls_port = 'c';
     const uint8_t right_ls_port = 'b';
     const uint8_t doinker_port = 'd';
 }

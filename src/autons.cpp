@@ -1,3 +1,5 @@
+#include "autons.hpp"
+#include "EZ-Template/util.hpp"
 #include "main.h" // IWYU pragma: keep
 
 
@@ -222,3 +224,114 @@ void interfered_example() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
+
+void blue_side_goal_rush()
+{
+  using namespace StratusQuo;
+  chassis.drive_angle_set(180_deg);
+  chassis.pid_drive_set(-30_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(210_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-18_in, 110);
+  chassis.pid_wait();
+}
+void red_side_goal_rush()
+{
+  using namespace StratusQuo;
+  chassis.pid_drive_set(40_in, 127);
+  chassis.pid_wait();
+  chassis.pid_swing_set(ez::LEFT_SWING, 30_deg, 127);
+}
+
+void blue_side_four_ring()
+{
+  using namespace StratusQuo;
+  chassis.drive_angle_set(180_deg);
+  chassis.pid_drive_set(-25_in, 60, true);
+  chassis.pid_wait();
+  StratusQuo::clamp.set(true);
+  pros::delay(100);
+  chassis.pid_turn_set(90_deg, 110, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(26_in, 110, true);
+  intake.move(127);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(0, 110, false);
+  chassis.pid_wait();
+  chassis.pid_drive_set(18_in, 50, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-8_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(45_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-7_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(0_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(14_in, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-50_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(120_deg, 110, true);
+  chassis.pid_wait();
+}
+
+void red_side_four_ring()
+{
+  using namespace StratusQuo;
+  chassis.drive_angle_set(180_deg);
+  chassis.pid_drive_set(-25_in, 60, true);
+  chassis.pid_wait();
+  StratusQuo::clamp.set(true);
+  pros::delay(100);
+  chassis.pid_turn_set(270_deg, 110, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(26_in, 110, true);
+  intake.move(127);
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_turn_set(360, 110, false);
+  chassis.pid_wait();
+  chassis.pid_drive_set(18_in, 50, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-8_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(315_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-7_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(360_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(14_in, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-50_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(240_deg, 110, true);
+  chassis.pid_wait();
+
+}
+void autonomous_skills()
+{
+ using namespace StratusQuo;
+chassis.drive_angle_set(180_deg);
+chassis.pid_drive_set(-24_in, 60, true);
+chassis.pid_wait();
+StratusQuo::clamp.set(true);
+pros::delay(100); 
+intake.move(127);
+chassis.pid_drive_set(24_in, 60, true);
+chassis.pid_wait();
+intake.move(127);
+chassis.pid_turn_set(270_deg, 110, true);
+chassis.pid_wait();
+intake.move(127);
+chassis.pid_drive_set(24_in, 60, true);
+chassis.pid_wait();
+intake.move(127);
+chassis.pid_turn_set(360_deg, 110, true);
+chassis.pid_wait();
+intake.move(127);
+chassis.pid_drive_set(48_in, 60, true);
+}

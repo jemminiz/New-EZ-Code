@@ -1,5 +1,6 @@
 #include "main.h"
 
+#include "autons.hpp"
 #include "pros/misc.h"
 #include "subsystems.hpp"
 
@@ -27,7 +28,6 @@ void initialize() {
   StratusQuo::chassis.opcontrol_curve_buttons_toggle(true);  // Enables modifying the controller curve with buttons on the joysticks
   StratusQuo::chassis.opcontrol_drive_activebrake_set(0);    // Sets the active brake kP. We recommend ~2.  0 will disable.
   StratusQuo::chassis.opcontrol_curve_default_set(0, 0);     // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
-  StratusQuo::clamp.set_toggle(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT));
 
   // Set the drive to your own constants from autons.cpp!
   default_constants();
@@ -38,6 +38,9 @@ void initialize() {
   
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
+      Auton("Red four ring", red_side_four_ring),
+      Auton("Blue four ring", blue_side_four_ring),
+      Auton("Blue goal rush", blue_side_goal_rush),
       Auton("Example Drive\n\nDrive forward and come back.", drive_example),
       Auton("Example Turn\n\nTurn 3 times.", turn_example),
       Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
@@ -115,15 +118,12 @@ void opcontrol() {
 
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
 
-  pros::Task clamp_task([]() {
-    if(limit_switch_pressed) StratusQuo::clamp.set(true);
-
-    pros::delay(100);
-  });
+  bool doinker_down = false;
 
   while (true) {
     // PID Tuner
     // After you find values that you're happy with, you'll have to set them in auton.cpp
+    /*
     if (!pros::competition::is_connected()) {
       // Enable / Disable PID Tuner
       //  When enabled:
@@ -140,15 +140,11 @@ void opcontrol() {
 
       StratusQuo::chassis.pid_tuner_iterate();  // Allow PID Tuner to iterate
     }
-
+    */
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
 
-    limit_switch_pressed = StratusQuo::left_limit_switch.get_value() && StratusQuo::right_limit_switch.get_value();
-    // ///StratusQuo::chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
-    // StratusQuo::chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
-    // StratusQuo::chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
-    // StratusQuo::chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
+    limit_switch_pressed = StratusQuo::left_limit_switch.get_new_press()/* && StratusQuo::right_limit_switch.get_value()*/;
 
     // . . .
     // Put more user control code here!
@@ -158,10 +154,10 @@ void opcontrol() {
     {
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
       {
-        StratusQuo::lady_brown.move(127);
+        StratusQuo::lady_brown.move(-127);
       }
       else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
-        StratusQuo::lady_brown.move(-127);
+        StratusQuo::lady_brown.move(127);
       else
         StratusQuo::lady_brown.brake();
     }
@@ -169,8 +165,10 @@ void opcontrol() {
     {
       // Drivetrain working as it should I think?
     }
+
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
     {
+      StratusQuo::lady_brown.set_pto(pto_enabled);
       pto_enabled = !pto_enabled;
     }
 
@@ -187,6 +185,16 @@ void opcontrol() {
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
     {
       StratusQuo::lady_brown.toggle();
+    }
+    if(limit_switch_pressed)
+    {
+      StratusQuo::clamp.set(true);
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))
+    {
+      StratusQuo::doinker.set(!doinker_down);
+      doinker_down = !doinker_down;
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::clamp.toggle();
