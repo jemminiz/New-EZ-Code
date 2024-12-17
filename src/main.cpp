@@ -224,23 +224,93 @@ void ez_template_extras() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  using namespace StratusQuo;
   // This is preference to what you like to drive on
-  chassis.drive_brake_set(MOTOR_BRAKE_COAST);
+  pros::motor_brake_mode_e_t driver_preference_brake = MOTOR_BRAKE_COAST;
+
+  StratusQuo::chassis.drive_brake_set(driver_preference_brake);
+
+  bool doinker_down = false;
+  bool limit_switch_pressed;
+  bool pto_enabled = false;
 
   while (true) {
-    // Gives you some extras to make EZ-Template ezier
-    ez_template_extras();
+    // PID Tuner
+    // After you find values that you're happy with, you'll have to set them in auton.cpp
+    /*
+    if (!pros::competition::is_connected()) {
+      // Enable / Disable PID Tuner
+      //  When enabled:
+      //  * use A and Y to increment / decrement the constants
+      //  * use the arrow keys to navigate the constants
+      if (master.get_digital_new_press(DIGITAL_X))
+        StratusQuo::chassis.pid_tuner_toggle();
 
-    chassis.opcontrol_tank();  // Tank control
-    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
-    // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
-    // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
-    // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
+      // Trigger the selected autonomous routine
+      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
+        autonomous();
+        StratusQuo::chassis.drive_brake_set(driver_preference_brake);
+      }
+
+      StratusQuo::chassis.pid_tuner_iterate();  // Allow PID Tuner to iterate
+    }
+    */
+    StratusQuo::chassis.opcontrol_tank();  // Tank control
+    StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
+
+    limit_switch_pressed = StratusQuo::left_limit_switch.get_new_press()/* && StratusQuo::right_limit_switch.get_value()*/;
 
     // . . .
     // Put more user control code here!
     // . . .
+
+    if(pto_enabled)
+    {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+      {
+        StratusQuo::lady_brown.move(-127);
+      }
+      else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+        StratusQuo::lady_brown.move(127);
+      else
+        StratusQuo::lady_brown.brake();
+    }
+    else
+    {
+      // Drivetrain working as it should I think?
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
+    {
+      StratusQuo::lady_brown.set_pto(pto_enabled);
+      pto_enabled = !pto_enabled;
+    }
+
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+    {
+      StratusQuo::intake.move(127);
+    }
+    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+    {
+      StratusQuo::intake.move(-127);
+    }
+    else StratusQuo::intake.brake();
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
+    {
+      StratusQuo::lady_brown.toggle();
+    }
+    if(limit_switch_pressed)
+    {
+      StratusQuo::clamp.set(true);
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))
+    {
+      StratusQuo::doinker.set(!doinker_down);
+      doinker_down = !doinker_down;
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::clamp.toggle();
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
