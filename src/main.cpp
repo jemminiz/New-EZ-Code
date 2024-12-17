@@ -1,4 +1,5 @@
 #include "main.h"
+#include "autons.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -19,11 +20,6 @@ void initialize() {
 
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
 
-  // Are you using tracking wheels?  Comment out which ones you're using here!
-  // chassis.odom_tracker_right_set(&right_tracker);
-  // chassis.odom_tracker_left_set(&left_tracker);
-  // chassis.odom_tracker_back_set(&horiz_tracker);  // Replace `back` to `front` if your tracker is in the front!
-
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(true);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
@@ -38,6 +34,10 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
+      {"Blue negative", blue_side_four_ring},
+      {"Red negative", red_side_four_ring},
+      {"Blue positive", blue_side_goal_rush},
+      {"Red positive", red_side_goal_rush},
       {"Drive\n\nDrive forward and come back", drive_example},
       {"Turn\n\nTurn 3 times.", turn_example},
       {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
