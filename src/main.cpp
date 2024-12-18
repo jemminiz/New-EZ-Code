@@ -1,5 +1,7 @@
 #include "main.h"
 #include "autons.hpp"
+#include "lady_brown.hpp"
+#include "pros/misc.h"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -34,10 +36,10 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
+      {"Red positive", red_side_goal_rush},
       {"Blue negative", blue_side_four_ring},
       {"Red negative", red_side_four_ring},
       {"Blue positive", blue_side_goal_rush},
-      {"Red positive", red_side_goal_rush},
       {"Drive\n\nDrive forward and come back", drive_example},
       {"Turn\n\nTurn 3 times.", turn_example},
       {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
@@ -284,6 +286,11 @@ void opcontrol() {
       StratusQuo::lady_brown.set_pto(pto_enabled);
       pto_enabled = !pto_enabled;
     }
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+    {
+      pto_enabled = true;
+      StratusQuo::lady_brown.set_pto(false);
+    }
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
     {
@@ -298,6 +305,11 @@ void opcontrol() {
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
     {
       StratusQuo::lady_brown.toggle();
+      if(pto_enabled)
+      {
+        StratusQuo::lady_brown.set_pto(pto_enabled);
+        pto_enabled = !pto_enabled;
+      }
     }
     if(limit_switch_pressed)
     {
