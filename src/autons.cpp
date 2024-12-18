@@ -411,41 +411,41 @@ void red_side_goal_rush()
   // TODO: Lower speed, then try to optimize with speed.
   using namespace StratusQuo;
   chassis.drive_angle_set(180_deg);
-  chassis.pid_drive_set(-32_in, 127);
+  chassis.pid_drive_set(-32_in, 60);
   chassis.pid_wait_quick();
-  chassis.pid_turn_set(150_deg, 127);
+  chassis.pid_turn_set(150_deg, 60);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(-13.75_in, 127);
+  chassis.pid_drive_set(-13.75_in, 60);
   chassis.pid_wait_quick();
   StratusQuo::clamp.set(true);
   pros::delay(25);
-  chassis.pid_drive_set(8_in, 110);
+  chassis.pid_drive_set(8_in, 60);
   intake.move(127);
   chassis.pid_wait();
-  chassis.pid_turn_set(210_deg, 110);
+  chassis.pid_turn_set(210_deg, 60);
   chassis.pid_wait();
   chassis.pid_drive_set(8_in, 60);
   chassis.pid_wait();
   pros::delay(100);
   intake.brake();
   StratusQuo::clamp.set(false);
-  chassis.pid_turn_set(-270_deg, 110);
+  chassis.pid_turn_set(-270_deg, 60);
   chassis.pid_wait_until(-45_deg);
   doinker.set(true);
   chassis.pid_wait();
-  chassis.pid_drive_set(-28_in, 110);
+  chassis.pid_drive_set(-28_in, 60);
   chassis.pid_wait();
   StratusQuo::clamp.set(true);
   intake.move(127);
-  chassis.pid_turn_set(225_deg, 110);
+  chassis.pid_turn_set(225_deg, 60);
   chassis.pid_wait();
   intake.toggle();
-  chassis.pid_drive_set(36_in, 110);
+  chassis.pid_drive_set(36_in, 60);
   chassis.pid_wait();
   intake.toggle();
-  chassis.pid_turn_set(0_deg, 110);
+  chassis.pid_turn_set(0_deg, 60);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_drive_set(24_in, 60);
 }
 
 void blue_side_four_ring()
