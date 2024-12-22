@@ -23,5 +23,9 @@ void blue_side_ring_winpoint();
 void red_side_ring_winpoint();
 void blue_side_four_ring();
 void red_side_four_ring();
+void blue_side_negative_quals();
+void red_side_negative_quals();
 void autonomous_skills();
 void default_constants();
+
+inline bool set_clamp = false;

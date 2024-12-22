@@ -1,7 +1,11 @@
+// TODO: Currently on 3.1.0
+
 #include "main.h"
+#include "EZ-Template/util.hpp"
 #include "autons.hpp"
 #include "lady_brown.hpp"
 #include "pros/misc.h"
+#include "subsystems.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -14,6 +18,9 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+
+pros::Task limit_switch_task([](){});
+
 void initialize() {
   using namespace StratusQuo;
 
@@ -35,11 +42,13 @@ void initialize() {
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.autons_add({
-      {"Red positive", red_side_goal_rush},
-      {"Blue negative", blue_side_four_ring},
-      {"Red negative", red_side_four_ring},
+  ez::as::auton_selector.autons_add({{"Blue positive", blue_side_goal_rush},
       {"Blue positive", blue_side_goal_rush},
+      {"Blue negative in quals", blue_side_negative_quals},
+      {"Red negative in quals", red_side_negative_quals},
+      {"Blue negative", blue_side_four_ring},
+      {"Red positive", red_side_goal_rush},
+      {"Red negative", red_side_four_ring}/*,
       {"Drive\n\nDrive forward and come back", drive_example},
       {"Turn\n\nTurn 3 times.", turn_example},
       {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
@@ -53,12 +62,13 @@ void initialize() {
       {"Pure Pursuit Wait Until\n\nGo to (24, 24) but start running an intake once the robot passes (12, 24)", odom_pure_pursuit_wait_until_example},
       {"Boomerang\n\nGo to (0, 24, 45) then come back to (0, 0, 0)", odom_boomerang_example},
       {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
-      {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", odom_boomerang_injected_pure_pursuit_example},
+      {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", odom_boomerang_injected_pure_pursuit_example},*/
   });
 
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
+  //master.rumble(chassis.drive_imu_calibrate() ? "." : "---");
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
 
@@ -100,8 +110,20 @@ void autonomous() {
   chassis.pid_targets_reset();                // Resets PID targets to 0
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
-  chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
+  //chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
+
+  limit_switch_task = pros::Task([]() {
+    while(true)
+    {
+      if(StratusQuo::left_limit_switch.get_new_press())
+      {
+        master.rumble("..");
+        set_clamp = true;
+      }
+      StratusQuo::clamp.set(set_clamp);
+    }
+  });
 
   /*
   Odometry and Pure Pursuit are not magic
@@ -123,6 +145,7 @@ void autonomous() {
 /**
  * Simplifies printing tracker values to the brain screen
  */
+ /*
 void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int line) {
   std::string tracker_value = "", tracker_width = "";
   // Check if the tracker exists
@@ -131,14 +154,14 @@ void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int lin
     tracker_width = "  width: " + util::to_string_with_precision(tracker->distance_to_center_get());  // Make text for the distance to center
   }
   ez::screen_print(tracker_value + tracker_width, line);  // Print final tracker text
-}
+} */
 
 /**
  * Ez screen task
  * Adding new pages here will let you view them during user control or autonomous
  * and will help you debug problems you're having
  */
-void ez_screen_task() {
+ /*void ez_screen_task() {
   using namespace StratusQuo;
   while (true) {
     // Only run this when not connected to a competition switch
@@ -160,7 +183,7 @@ void ez_screen_task() {
           screen_print_tracker(chassis.odom_tracker_front, "f", 7);
         }
       }
-    }
+    } 
 
     // Remove all blank pages when connected to a comp switch
     else {
@@ -171,7 +194,7 @@ void ez_screen_task() {
     pros::delay(ez::util::DELAY_TIME);
   }
 }
-pros::Task ezScreenTask(ez_screen_task);
+pros::Task ezScreenTask(ez_screen_task); */
 
 /**
  * Gives you some extras to run in your opcontrol:
@@ -311,10 +334,6 @@ void opcontrol() {
         pto_enabled = !pto_enabled;
       }
     }
-    if(limit_switch_pressed)
-    {
-      StratusQuo::clamp.set(true);
-    }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))
     {
@@ -322,7 +341,7 @@ void opcontrol() {
       doinker_down = !doinker_down;
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::clamp.toggle();
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
