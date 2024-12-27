@@ -1,5 +1,8 @@
 #include "autons.hpp"
+#include "EZ-Template/util.hpp"
+#include "intake.hpp"
 #include "main.h" // IWYU pragma: keep
+#include "subsystems.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -490,6 +493,61 @@ void red_side_goal_rush()
   chassis.pid_wait_quick();
   chassis.pid_drive_set(24_in, 60);
 }
+
+void red_side_fast_goal_rush()
+{
+  using namespace StratusQuo;
+  chassis.drive_angle_set(45_deg);
+  chassis.pid_drive_set(38_in, 127);
+  chassis.pid_wait();
+  doinker.set(true);
+  pros::delay(500);
+  chassis.pid_turn_set(100_deg, 110, true);
+  chassis.pid_wait();
+  doinker.set(false);
+  chassis.pid_drive_set(-12_in, 127);
+  chassis.pid_wait();
+  set_clamp = true;
+  pros::delay(100);
+  chassis.pid_wait();
+  intake.move( 127);
+  pros::delay(800);
+  chassis.pid_wait();
+  set_clamp = false;
+  chassis.pid_wait();
+  chassis.pid_turn_set(140_deg, 110, true);
+  intake.brake();
+  chassis.pid_wait();
+  chassis.pid_drive_set(31_in, 127);
+  intake.move_bottom_motor(127);
+  chassis.pid_wait();
+  intake.brake();
+  chassis.pid_wait();
+  chassis.pid_drive_set(-4_in, 127);
+  chassis.pid_wait();
+  chassis.pid_turn_set(220_deg, 110, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-12_in, 127);
+  chassis.pid_wait();
+  set_clamp = true;
+  intake.move( 127);
+  chassis.pid_wait();
+  chassis.pid_turn_set(272_deg, 110, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(40_in, 127);
+  chassis.pid_wait_quick_chain();
+  intake.toggle();
+  intake.brake();
+  intake.move(127);
+  chassis.pid_wait();
+  chassis.pid_drive_set(18_in, 50); 
+  chassis.pid_wait();
+  intake.toggle();
+  chassis.pid_wait();
+  chassis.pid_turn_set(390_deg, 60);
+  chassis.pid_wait();
+  chassis.pid_drive_set(32_in, 110, true);
+} 
 
 void blue_side_negative_quals()
 {

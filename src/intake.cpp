@@ -27,3 +27,9 @@ int StratusQuo::Intake::brake()
     _top_motor.brake();
     return 0;
 }
+
+int StratusQuo::Intake::move_bottom_motor(int voltage)
+{
+    _bottom_motor.move(voltage);
+    return 0;
+}

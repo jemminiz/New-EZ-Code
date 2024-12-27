@@ -12,6 +12,7 @@ namespace StratusQuo
             bool toggle();
             int move(int voltage);
             int brake();
+            int move_bottom_motor(int voltage);
         private:
             pros::Motor _bottom_motor;
             pros::Motor _top_motor;
