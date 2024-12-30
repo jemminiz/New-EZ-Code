@@ -22,13 +22,13 @@
 pros::Task limit_switch_task([]() {
     while(true)
     {
-      if(StratusQuo::left_limit_switch.get_new_press())
+      if(StratusQuo::limit_switch.get_new_press())
       {
         master.rumble("..");
         set_clamp = true;
       }
       StratusQuo::clamp.set(set_clamp);
-      pros::delay(25);
+      pros::delay(10);
     }
   });
 
@@ -54,6 +54,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
+      {"Solo AWP", red_side_solo_sig_awp_ring_side},
+      {"New Ring Side", red_side_new_ring_side},
       {"Fast red goal rush", red_side_fast_goal_rush},
       {"Blue positive", blue_side_goal_rush},
       {"Blue negative in quals", blue_side_negative_quals},
@@ -242,7 +244,6 @@ void opcontrol() {
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
 
   bool doinker_down = false;
-  bool limit_switch_pressed;
   bool pto_enabled = false;
 
   while (true) {
@@ -268,8 +269,6 @@ void opcontrol() {
     */
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
-
-    limit_switch_pressed = StratusQuo::left_limit_switch.get_new_press()/* && StratusQuo::right_limit_switch.get_value()*/;
 
     // . . .
     // Put more user control code here!
