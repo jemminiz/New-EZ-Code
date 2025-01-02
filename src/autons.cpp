@@ -21,9 +21,9 @@ void default_constants() {
   using namespace StratusQuo;
   // P, I, D, and Start I
   // https://ez-robotics.github.io/EZ-Template/tutorials/tuning_constants
-  chassis.pid_heading_constants_set(11, 0, 20);
-  chassis.pid_drive_constants_set(26, 0, 300);
-  chassis.pid_turn_constants_set(3, 0.05, 20, 15);
+  chassis.pid_heading_constants_set(11, 0, 40);
+  chassis.pid_drive_constants_set(15, 0, 300);
+  chassis.pid_turn_constants_set(2.95, 0, 20);
   chassis.pid_swing_constants_set(6, 0, 65);
   //chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);    // Angular control for odom motions
   //chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
@@ -113,6 +113,17 @@ void drive_and_turn() {
 
   chassis.pid_drive_set(-24_in, DRIVE_SPEED, true);
   chassis.pid_wait();
+}
+
+void testing_pid_auto()
+{
+
+  using namespace StratusQuo;
+  chassis.drive_angle_set(0_deg);
+  chassis.pid_drive_set(48_in, 110);
+  chassis.pid_wait();
+
+
 }
 
 ///
@@ -428,12 +439,13 @@ void blue_side_goal_rush()
   chassis.pid_wait();
   chassis.pid_drive_set(16_in, 60);
   chassis.pid_wait_until(12_in);
-  intake.brake();
   chassis.pid_wait();
   pros::delay(100);
+  intake.brake();
   set_clamp = false;
   chassis.pid_turn_set(270_deg, 60);
   chassis.pid_wait();
+  intake.move_bottom_motor(127);
   chassis.pid_drive_set(-20_in, 60);
   chassis.pid_wait();
   set_clamp = true;
@@ -463,7 +475,6 @@ void red_side_goal_rush()
   set_clamp = true;
   intake.move(-127);
   pros::delay(100);
-  intake.brake();
   chassis.pid_drive_set(8_in, 127);
   intake.move(127);
   chassis.pid_wait();
@@ -516,12 +527,9 @@ void red_side_fast_goal_rush()
   set_clamp = false;
   chassis.pid_wait();
   chassis.pid_turn_set(140_deg, 110, true);
-  intake.brake();
   chassis.pid_wait();
   chassis.pid_drive_set(31_in, 127);
   intake.move_bottom_motor(127);
-  chassis.pid_wait();
-  intake.brake();
   chassis.pid_wait();
   chassis.pid_drive_set(-4_in, 127);
   chassis.pid_wait();
@@ -645,51 +653,61 @@ void red_side_solo_sig_awp_ring_side()
   lady_brown.set_pto(false);
   pros::delay(100);
   lady_brown.move(-127);
-  pros::delay(500);
+  pros::delay(450);
   lady_brown.move(127);
-  pros::delay(500);
+  pros::delay(450);
   lady_brown.set_pto(true);
 
   chassis.pid_drive_set(-24_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
   chassis.pid_turn_set(45_deg, 110);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
+  intake.move(-127);
+  intake.move_bottom_motor(127);
+  pros::delay(100);
   set_clamp = true;
   chassis.pid_turn_set(110_deg, 110);
-  chassis.pid_wait_quick_chain();
+  intake.brake();
+  chassis.pid_wait();
   intake.move(127);
   chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
   chassis.pid_turn_set(-25_deg, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
   chassis.pid_drive_set(48_in, 110);
-  intake.brake();
-  intake.move_bottom_motor(127);
   intake.toggle();
   chassis.pid_wait();
   intake.toggle();
-  chassis.pid_drive_set(-4_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-8_in, 110);
+  chassis.pid_wait();
+  intake.brake();
   set_clamp = false;
-  chassis.pid_turn_set(-45_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_turn_set(-45_deg, 80);
+  chassis.pid_wait();
+  chassis.pid_drive_set(31_in, 110);
+  chassis.pid_wait();
   chassis.pid_turn_set(47_deg, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
   chassis.pid_drive_set(-26_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
+  intake.move(-127);
+  intake.move_bottom_motor(127);
   set_clamp = true;
-  intake.move(127);
   chassis.pid_turn_set(-50_deg, 110);
-  chassis.pid_wait_quick();
+  intake.move(127);
+  chassis.pid_wait();
   chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait_quick();
+  chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
   chassis.pid_wait();
-  intake.move(10);
+  chassis.pid_turn_set(0_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-20_in, 110);
+  lady_brown.toggle();
+  chassis.pid_wait_until(-12_in);
+  intake.move(40);
 }
 
 void red_side_negative_quals()

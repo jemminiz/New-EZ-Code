@@ -31,4 +31,6 @@ void red_side_solo_sig_awp_ring_side();
 void autonomous_skills();
 void default_constants();
 
+void testing_pid_auto();
+
 inline bool set_clamp = false;

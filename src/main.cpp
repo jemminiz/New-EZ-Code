@@ -1,11 +1,13 @@
 // TODO: Currently on 3.1.0
 
 #include "main.h"
+
 #include "EZ-Template/util.hpp"
 #include "autons.hpp"
 #include "lady_brown.hpp"
 #include "pros/misc.h"
 #include "subsystems.hpp"
+
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -20,17 +22,24 @@
  */
 
 pros::Task limit_switch_task([]() {
-    while(true)
-    {
-      if(StratusQuo::limit_switch.get_new_press())
-      {
-        master.rumble("..");
-        set_clamp = true;
-      }
-      StratusQuo::clamp.set(set_clamp);
-      pros::delay(10);
+  while (true) {
+    if (StratusQuo::limit_switch.get_new_press()) {
+      master.rumble("..");
+      set_clamp = true;
     }
-  });
+    StratusQuo::clamp.set(set_clamp);
+    pros::delay(10);
+  }
+});
+
+pros::Task printTask([]() {
+  while (true) {
+    using namespace StratusQuo;
+    pros::lcd::print(5, "Encoder values: %d left and %d right\n", chassis.drive_sensor_left_raw(), chassis.drive_sensor_right_raw());
+    pros::lcd::print(5, "Encoder values: %d left and %d right\n", chassis.drive_sensor_left_raw(), chassis.drive_sensor_right_raw());
+    pros::delay(50);
+  }
+});
 
 void initialize() {
   using namespace StratusQuo;
@@ -63,14 +72,15 @@ void initialize() {
       {"Blue negative", blue_side_four_ring},
       {"Red positive", red_side_goal_rush},
       {"Red negative", red_side_four_ring},
-  
+
   });
 
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
-  //master.rumble(chassis.drive_imu_calibrate() ? "." : "---");
+  // master.rumble(chassis.drive_imu_calibrate() ? "." : "---");
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
+  
 }
 
 /**
@@ -108,10 +118,10 @@ void competition_initialize() {
  */
 void autonomous() {
   using namespace StratusQuo;
-  chassis.pid_targets_reset();                // Resets PID targets to 0
-  chassis.drive_imu_reset();                  // Reset gyro position to 0
-  chassis.drive_sensor_reset();               // Reset drive sensors to 0
-  //chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
+  chassis.pid_targets_reset();   // Resets PID targets to 0
+  chassis.drive_imu_reset();     // Reset gyro position to 0
+  chassis.drive_sensor_reset();  // Reset drive sensors to 0
+  // chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
   /*
@@ -134,15 +144,15 @@ void autonomous() {
 /**
  * Simplifies printing tracker values to the brain screen
  */
- /*
+/*
 void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int line) {
-  std::string tracker_value = "", tracker_width = "";
-  // Check if the tracker exists
-  if (tracker != nullptr) {
-    tracker_value = name + " tracker: " + util::to_string_with_precision(tracker->get());             // Make text for the tracker value
-    tracker_width = "  width: " + util::to_string_with_precision(tracker->distance_to_center_get());  // Make text for the distance to center
-  }
-  ez::screen_print(tracker_value + tracker_width, line);  // Print final tracker text
+ std::string tracker_value = "", tracker_width = "";
+ // Check if the tracker exists
+ if (tracker != nullptr) {
+   tracker_value = name + " tracker: " + util::to_string_with_precision(tracker->get());             // Make text for the tracker value
+   tracker_width = "  width: " + util::to_string_with_precision(tracker->distance_to_center_get());  // Make text for the distance to center
+ }
+ ez::screen_print(tracker_value + tracker_width, line);  // Print final tracker text
 } */
 
 /**
@@ -150,38 +160,38 @@ void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int lin
  * Adding new pages here will let you view them during user control or autonomous
  * and will help you debug problems you're having
  */
- /*void ez_screen_task() {
-  using namespace StratusQuo;
-  while (true) {
-    // Only run this when not connected to a competition switch
-    if (!pros::competition::is_connected()) {
-      // Blank page for odom debugging
-      if (chassis.odom_enabled() && !chassis.pid_tuner_enabled()) {
-        // If we're on the first blank page...
-        if (ez::as::page_blank_is_on(0)) {
-          // Display X, Y, and Theta
-          ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
-                               "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
-                               "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
-                           1);  // Don't override the top Page line
+/*void ez_screen_task() {
+ using namespace StratusQuo;
+ while (true) {
+   // Only run this when not connected to a competition switch
+   if (!pros::competition::is_connected()) {
+     // Blank page for odom debugging
+     if (chassis.odom_enabled() && !chassis.pid_tuner_enabled()) {
+       // If we're on the first blank page...
+       if (ez::as::page_blank_is_on(0)) {
+         // Display X, Y, and Theta
+         ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
+                              "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
+                              "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
+                          1);  // Don't override the top Page line
 
-          // Display all trackers that are being used
-          screen_print_tracker(chassis.odom_tracker_left, "l", 4);
-          screen_print_tracker(chassis.odom_tracker_right, "r", 5);
-          screen_print_tracker(chassis.odom_tracker_back, "b", 6);
-          screen_print_tracker(chassis.odom_tracker_front, "f", 7);
-        }
-      }
-    } 
+         // Display all trackers that are being used
+         screen_print_tracker(chassis.odom_tracker_left, "l", 4);
+         screen_print_tracker(chassis.odom_tracker_right, "r", 5);
+         screen_print_tracker(chassis.odom_tracker_back, "b", 6);
+         screen_print_tracker(chassis.odom_tracker_front, "f", 7);
+       }
+     }
+   }
 
-    // Remove all blank pages when connected to a comp switch
-    else {
-      if (ez::as::page_blank_amount() > 0)
-        ez::as::page_blank_remove_all();
-    }
+   // Remove all blank pages when connected to a comp switch
+   else {
+     if (ez::as::page_blank_amount() > 0)
+       ez::as::page_blank_remove_all();
+   }
 
-    pros::delay(ez::util::DELAY_TIME);
-  }
+   pros::delay(ez::util::DELAY_TIME);
+ }
 }
 pros::Task ezScreenTask(ez_screen_task); */
 
@@ -274,60 +284,47 @@ void opcontrol() {
     // Put more user control code here!
     // . . .
 
-    if(pto_enabled)
-    {
-      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-      {
+    if (pto_enabled) {
+      if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         StratusQuo::lady_brown.move(-127);
-      }
-      else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+      } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         StratusQuo::lady_brown.move(127);
       else
         StratusQuo::lady_brown.brake();
-    }
-    else
-    {
+    } else {
       // Drivetrain working as it should I think?
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
-    {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       StratusQuo::lady_brown.set_pto(pto_enabled);
       pto_enabled = !pto_enabled;
     }
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       pto_enabled = true;
       StratusQuo::lady_brown.set_pto(false);
     }
 
-    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
-    {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       StratusQuo::intake.move(127);
-    }
-    else if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
-    {
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       StratusQuo::intake.move(-127);
-    }
-    else StratusQuo::intake.brake();
+    } else
+      StratusQuo::intake.brake();
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
-    {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       StratusQuo::lady_brown.toggle();
-      if(pto_enabled)
-      {
+      if (pto_enabled) {
         StratusQuo::lady_brown.set_pto(pto_enabled);
         pto_enabled = !pto_enabled;
       }
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A))
-    {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       StratusQuo::doinker.set(!doinker_down);
       doinker_down = !doinker_down;
     }
 
-    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
