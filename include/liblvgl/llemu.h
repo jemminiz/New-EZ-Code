@@ -56,6 +56,8 @@ typedef void (*lcd_btn_cb_fn_t)(void);
 #define LCD_BTN_LEFT 4
 #define LCD_BTN_CENTER 2
 #define LCD_BTN_RIGHT 1
+#define LCD_BTN_UP 8
+#define LCD_BTN_DOWN 16
 
 typedef struct lcd_s {
 	lv_obj_t* frame;
