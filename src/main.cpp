@@ -7,6 +7,7 @@
 #include "lady_brown.hpp"
 #include "pros/misc.h"
 #include "subsystems.hpp"
+#include "Master-Selector/api.hpp" // IWYU pragma: keep
 
 
 /////
@@ -24,20 +25,11 @@
 pros::Task limit_switch_task([]() {
   while (true) {
     if (StratusQuo::limit_switch.get_new_press()) {
-      master.rumble("..");
+      master.rumble("-");
       set_clamp = true;
     }
     StratusQuo::clamp.set(set_clamp);
     pros::delay(10);
-  }
-});
-
-pros::Task printTask([]() {
-  while (true) {
-    using namespace StratusQuo;
-    pros::lcd::print(5, "Encoder values: %d left and %d right\n", chassis.drive_sensor_left_raw(), chassis.drive_sensor_right_raw());
-    pros::lcd::print(5, "Encoder values: %d left and %d right\n", chassis.drive_sensor_left_raw(), chassis.drive_sensor_right_raw());
-    pros::delay(50);
   }
 });
 
@@ -57,28 +49,33 @@ void initialize() {
   // Set the drive to your own constants from autons.cpp!
   default_constants();
 
-  // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
-  // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
-  // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
-
-  // Autonomous Selector using LLEMU
-  ez::as::auton_selector.autons_add({
-      {"Solo AWP", red_side_solo_sig_awp_ring_side},
-      {"New Ring Side", red_side_new_ring_side},
-      {"Fast red goal rush", red_side_fast_goal_rush},
-      {"Blue positive", blue_side_goal_rush},
-      {"Blue negative in quals", blue_side_negative_quals},
-      {"Red negative in quals", red_side_negative_quals},
-      {"Blue negative", blue_side_four_ring},
-      {"Red positive", red_side_goal_rush},
-      {"Red negative", red_side_four_ring},
-
-  });
+  // Add autons to the auton selector
+  // WARNING: A LOT OF MESSING AROUND HERE
+  ms::set_autons({{ms::Category("AWPs",
+                 {
+                    ms::Auton("Full Solo", solo_awp),
+                    ms::Auton("Left Alliance 2 Stack", half_awp),
+                    ms::Auton("Right Alliance 2 Stack", right_side_half_awp),
+                    ms::Auton("Left no Alliance Stack", awp_no_ring)
+                  })},
+                  ms::Category("Blue",
+                  {
+                    ms::Auton("Blue Side Goal Rush", blue_side_goal_rush),
+                    ms::Auton("Blue Side Four Ring", blue_side_four_ring),
+                    ms::Auton("Blue Side Fast Goal Rush", blue_side_fast_goal_rush),
+                    ms::Auton("Blue Side Ring Rush", blue_side_ring_rush)
+                  }),
+                  ms::Category("Red",
+                  {
+                    ms::Auton("Red Side Goal Rush", red_side_goal_rush),
+                    ms::Auton("Red Side Four Ring", red_side_four_ring),
+                    ms::Auton("Red Side Fast Goal Rush", red_side_fast_goal_rush),
+                    ms::Auton("Red Side Ring Rush", red_side_ring_rush)
+                  })});
 
   // Initialize chassis and auton selector
   chassis.initialize();
-  ez::as::initialize();
-  // master.rumble(chassis.drive_imu_calibrate() ? "." : "---");
+  ms::initialize(); // Master auton selector -- different than ez selector
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
   
 }

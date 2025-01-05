@@ -26,8 +26,13 @@ void red_side_four_ring();
 void blue_side_negative_quals();
 void red_side_negative_quals();
 void red_side_fast_goal_rush();
-void red_side_new_ring_side();
-void red_side_solo_sig_awp_ring_side();
+void red_side_ring_rush();
+void solo_awp();
+void half_awp();
+void awp_no_ring();
+void right_side_half_awp();
+void blue_side_fast_goal_rush();
+void blue_side_ring_rush();
 void autonomous_skills();
 void default_constants();
 
