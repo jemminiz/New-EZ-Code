@@ -1,8 +1,6 @@
 #include "main.h"
-#include <cstdint>
 
 #include "EZ-Template/util.hpp"
-#include "liblvgl/llemu.hpp"
 #include "autons.hpp"
 #include "lady_brown.hpp"
 #include "pros/misc.h"
@@ -32,18 +30,6 @@ pros::Task limit_switch_task([]() {
   }
 });
 
-rd::Selector selector(
-{
-  {"Solo AWP", solo_awp},
-  {"AWP No Second Goal", half_awp},
-  {"AWP No Alliance Stake Stack", awp_no_ring},
-  {"Right Half AWP", right_side_half_awp},
-  {"Blue Goal Rush", blue_side_goal_rush},
-  {"Red Goal Rush", red_side_goal_rush},
-  {"Blue Ring Rush", blue_side_ring_rush},
-  {"Red Ring Rush", red_side_ring_rush}
-});
-
 void initialize() {
   using namespace StratusQuo;
 
@@ -53,7 +39,7 @@ void initialize() {
   chassis.opcontrol_drive_activebrake_set(0.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
   chassis.opcontrol_curve_default_set(0.0, 0.0);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
 
-  default_constants();
+  StratusQuo::default_constants();
 
   chassis.drive_imu_calibrate(false);
   chassis.drive_sensor_reset();
