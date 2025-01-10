@@ -27,7 +27,6 @@ namespace StratusQuo
     inline ez::Piston ring_rush_mech(ring_rush_port, false);
 
     inline void default_constants() {
-        using namespace StratusQuo;
         // P, I, D, and Start I
         // https://ez-robotics.github.io/EZ-Template/tutorials/tuning_constants
         chassis.pid_heading_constants_set(10.6, 0, 40);
