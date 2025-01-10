@@ -1,11 +1,4 @@
-#include "main.h"
-
-#include "EZ-Template/util.hpp"
-#include "autons.hpp"
-#include "lady_brown.hpp"
-#include "pros/misc.h"
-#include "subsystems.hpp"
-
+#include "api.hpp" // IWYU pragma: keep
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -86,7 +79,7 @@ void autonomous() {
   chassis.drive_imu_reset();     // Reset gyro position to 0
   chassis.drive_sensor_reset();  // Reset drive sensors to 0
   // chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
-  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
+  chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
   /*
   Odometry and Pure Pursuit are not magic
@@ -102,7 +95,6 @@ void autonomous() {
   */
 
   // Uncomment this to use the auton selector
-  /*
   if(selector.get_auton())
   {
     selector.run_auton();
@@ -112,7 +104,7 @@ void autonomous() {
     chassis.pid_drive_set(6_in, 110);
     chassis.pid_wait();
   }
-  // */
+  //
   blue_side_goal_rush();
 }
 
@@ -188,11 +180,11 @@ void ez_template_extras() {
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
-    if (master.get_digital_new_press(DIGITAL_X))
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X))
       chassis.pid_tuner_toggle();
 
     // Trigger the selected autonomous routine
-    if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B) && master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       pros::motor_brake_mode_e_t preference = chassis.drive_brake_get();
       autonomous();
       chassis.drive_brake_set(preference);
@@ -224,7 +216,7 @@ void ez_template_extras() {
  */
 void opcontrol() {
   // This is preference to what you like to drive on
-  pros::motor_brake_mode_e_t driver_preference_brake = MOTOR_BRAKE_COAST;
+  pros::motor_brake_mode_e_t driver_preference_brake = pros::E_MOTOR_BRAKE_COAST;
 
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
 
