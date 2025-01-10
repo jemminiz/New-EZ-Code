@@ -430,7 +430,7 @@ void right_side_half_awp()
 #pragma endregion
 
 #pragma region Skills
-void autonomous_skills()
+void first_autonomous_skills()
 {
  using namespace StratusQuo;
 chassis.drive_angle_set(180_deg);
@@ -452,5 +452,35 @@ chassis.pid_turn_set(360_deg, 110, true);
 chassis.pid_wait();
 intake.move(127);
 chassis.pid_drive_set(48_in, 60, true);
+}
+
+void second_autonomous_skills()
+{
+  using namespace StratusQuo;
+  chassis.drive_angle_set(0_deg);
+  intake.move(127);
+  pros::delay(1000);
+  intake.brake();
+  chassis.pid_drive_set(24_in, 60, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-24_in, 110);
+  chassis.pid_wait();
+  set_clamp = true;
+  intake.move(-127);
+  chassis.pid_turn_set(-90_deg, 110);
+  chassis.pid_wait();
+  intake.move(127);
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-180_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-45_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_wait();
 }
 #pragma endregion

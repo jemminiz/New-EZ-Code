@@ -13,7 +13,8 @@ void half_awp();
 void awp_no_ring();
 void right_side_half_awp();
 
-void autonomous_skills();
+void first_autonomous_skills();
+void second_autonomous_skills();
 
 
 void default_constants();

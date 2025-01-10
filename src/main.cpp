@@ -104,8 +104,8 @@ void autonomous() {
     chassis.pid_drive_set(6_in, 110);
     chassis.pid_wait();
   }
-  //
-  blue_side_goal_rush();
+  // Uncomment to edit a specific auton.
+  //blue_side_goal_rush();
 }
 
 /**
