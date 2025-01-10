@@ -1,4 +1,5 @@
 #include "main.h"
+#include <cstdint>
 
 #include "EZ-Template/util.hpp"
 #include "liblvgl/llemu.hpp"
@@ -36,13 +37,15 @@ rd::Selector selector(
   {"Solo AWP", solo_awp},
   {"AWP No Second Goal", half_awp},
   {"AWP No Alliance Stake Stack", awp_no_ring},
-  {"Right Half AWP", right_side_half_awp}
+  {"Right Half AWP", right_side_half_awp},
+  {"Blue Goal Rush", blue_side_goal_rush},
+  {"Red Goal Rush", red_side_goal_rush},
+  {"Blue Ring Rush", blue_side_ring_rush},
+  {"Red Ring Rush", red_side_ring_rush}
 });
 
 void initialize() {
   using namespace StratusQuo;
-
-  ez::ez_template_print();
 
   pros::delay(500);
 
@@ -52,7 +55,8 @@ void initialize() {
 
   default_constants();
 
-  chassis.initialize();
+  chassis.drive_imu_calibrate(false);
+  chassis.drive_sensor_reset();
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
@@ -112,6 +116,18 @@ void autonomous() {
   */
 
   // Uncomment this to use the auton selector
+  /*
+  if(selector.get_auton())
+  {
+    selector.run_auton();
+  }
+  else
+  {
+    chassis.pid_drive_set(6_in, 110);
+    chassis.pid_wait();
+  }
+  // */
+  blue_side_goal_rush();
 }
 
 /**

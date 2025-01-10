@@ -21,7 +21,7 @@ void default_constants() {
   using namespace StratusQuo;
   // P, I, D, and Start I
   // https://ez-robotics.github.io/EZ-Template/tutorials/tuning_constants
-  chassis.pid_heading_constants_set(10.85, 0, 40);
+  chassis.pid_heading_constants_set(10.6, 0, 40);
   chassis.pid_drive_constants_set(15, 0, 300);
   chassis.pid_turn_constants_set(2.95, 0, 20);
   chassis.pid_swing_constants_set(6, 0, 65);
@@ -418,47 +418,54 @@ void measure_offsets() {
 // . . .
 void blue_side_goal_rush()
 {
-  // TODO: Lower speed, then try to optimize with speed.
   using namespace StratusQuo;
-  chassis.drive_angle_set(180_deg);
-  chassis.pid_drive_set(-28_in, 127);
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set(210_deg, 127);
+  chassis.pid_drive_set(46_in, 127);
+  intake.move(127);
   chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-18_in, 127);
+  intake.brake();
+  intake.move_bottom_motor(127);
+  doinker.set(true);
+  pros::delay(250);
+  chassis.pid_turn_set(100_deg, 127);
   chassis.pid_wait_quick();
-  pros::delay(25);
+  doinker.set(false);
+  pros::delay(450);
+  chassis.pid_turn_set(-60_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-16_in, 110);
+  chassis.pid_wait();
   set_clamp = true;
   intake.move(-127);
-  pros::delay(100);
-  intake.brake();
-  chassis.pid_drive_set(8_in, 127);
+  intake.move_bottom_motor(127);
+  chassis.pid_turn_set(90_deg, 70);
+  chassis.pid_wait_until(0_deg);
   intake.move(127);
   chassis.pid_wait();
-  chassis.pid_turn_set(135_deg, 127);
-  chassis.pid_wait();
-  chassis.pid_drive_set(16_in, 60);
-  chassis.pid_wait_until(12_in);
-  chassis.pid_wait();
-  pros::delay(100);
-  intake.brake();
+  pros::delay(500);
   set_clamp = false;
-  chassis.pid_turn_set(270_deg, 60);
+  chassis.pid_turn_set(-68_deg, 110);
   chassis.pid_wait();
-  intake.move_bottom_motor(127);
-  chassis.pid_drive_set(-20_in, 60);
+  chassis.pid_drive_set(-15_in, 110);
   chassis.pid_wait();
   set_clamp = true;
+  intake.move(-127);
+  intake.move_bottom_motor(127);
+  chassis.pid_turn_set(-225_deg, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(36_in, 110);
   intake.move(127);
-  chassis.pid_turn_set(135_deg, 60);
+  intake.toggle();
   chassis.pid_wait();
   intake.toggle();
-  chassis.pid_drive_set(38_in, 40);
+  chassis.pid_drive_set(-12_in, 40);
   chassis.pid_wait();
-  intake.toggle();
-  chassis.pid_turn_set(0_deg, 40);
+  chassis.pid_turn_set(-118_deg, 110);
   chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 60);
+  chassis.pid_drive_set(68_in, 110);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-12_in, 40);
+  chassis.pid_wait();
+
 }
 void red_side_goal_rush()
 {
