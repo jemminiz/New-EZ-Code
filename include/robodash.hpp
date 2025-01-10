@@ -14,6 +14,6 @@ inline rd::Selector selector(
   {"Red Goal Rush", red_side_goal_rush},
   {"Blue Ring Rush", blue_side_ring_rush},
   {"Red Ring Rush", red_side_ring_rush},
-  {"First skills", first_autonomous_skills},
+  {"First Skills", first_autonomous_skills},
   {"Second Skills", second_autonomous_skills}
 });
