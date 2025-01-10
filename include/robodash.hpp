@@ -1,7 +1,7 @@
 // Intent - handle all robodash related code
 
 #include "autons.hpp"
-#include "robodash/views/selector.hpp"
+#include "robodash/api.h" // IWYU pragma: keep
 inline rd::Selector selector(
 {
   {"Solo AWP", solo_awp},
