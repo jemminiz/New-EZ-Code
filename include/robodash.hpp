@@ -3,6 +3,7 @@
 
 #include "autons.hpp"
 #include "robodash/api.h" // IWYU pragma: keep
+#include "robodash/views/console.hpp"
 
 inline rd::Selector selector(
 {
@@ -17,3 +18,13 @@ inline rd::Selector selector(
   {"First Skills", first_autonomous_skills},
   {"Second Skills", second_autonomous_skills}
 });
+
+inline rd::Console console("Debug console");
+
+//inline rd::Image image("assets/stratusquo.png");
+
+inline void debug()
+{
+  console.focus();
+  console.print("Hi guys!");
+}
