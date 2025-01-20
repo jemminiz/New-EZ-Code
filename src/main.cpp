@@ -257,6 +257,15 @@ void opcontrol() {
     // Put more user control code here!
     // . . .
 
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      StratusQuo::lady_brown.set_pto(pto_enabled);
+      pto_enabled = !pto_enabled;
+    }
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      pto_enabled = true;
+      StratusQuo::lady_brown.set_pto(false);
+    }
+    
     if (pto_enabled) {
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         StratusQuo::lady_brown.move(-127);
@@ -266,15 +275,6 @@ void opcontrol() {
         StratusQuo::lady_brown.brake();
     } else {
       // Drivetrain working as it should I think?
-    }
-
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      StratusQuo::lady_brown.set_pto(pto_enabled);
-      pto_enabled = !pto_enabled;
-    }
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      pto_enabled = true;
-      StratusQuo::lady_brown.set_pto(false);
     }
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
