@@ -258,14 +258,14 @@ void opcontrol() {
     // . . .
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      StratusQuo::lady_brown.set_pto(pto_enabled);
       pto_enabled = !pto_enabled;
+      StratusQuo::lady_brown.set_pto(pto_enabled);
     }
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       pto_enabled = true;
-      StratusQuo::lady_brown.set_pto(false);
+      StratusQuo::lady_brown.set_pto(pto_enabled);
     }
-    
+
     if (pto_enabled) {
       if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
         StratusQuo::lady_brown.move(-127);
@@ -287,8 +287,8 @@ void opcontrol() {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       StratusQuo::lady_brown.toggle();
       if (pto_enabled) {
-        StratusQuo::lady_brown.set_pto(pto_enabled);
         pto_enabled = !pto_enabled;
+        StratusQuo::lady_brown.set_pto(pto_enabled);
       }
     }
 

@@ -40,7 +40,7 @@ int StratusQuo::Lady_Brown::brake()
 int StratusQuo::Lady_Brown::set_pto(bool input)
 {
     // intent - true == lb
-    _pto.set(!input); // Check logic - should work?
+    _pto.set(input); // Check logic - should work?
     return 0;
 }
 
