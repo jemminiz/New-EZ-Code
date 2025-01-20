@@ -8,7 +8,8 @@ void blue_side_fast_goal_rush();
 void red_side_ring_rush();
 void blue_side_ring_rush();
 
-void solo_awp();
+void solo_awp_left();
+void solo_awp_right();
 void half_awp();
 void awp_no_ring();
 void right_side_half_awp();

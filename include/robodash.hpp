@@ -7,7 +7,8 @@
 
 inline rd::Selector selector(
 {
-  {"Solo AWP", solo_awp},
+  {"Solo AWP Left Side", solo_awp_left},
+  {"Solo AWP Right Side", solo_awp_right},
   {"AWP No Second Goal", half_awp},
   {"AWP No Alliance Stake Stack", awp_no_ring},
   {"Right Half AWP", right_side_half_awp},

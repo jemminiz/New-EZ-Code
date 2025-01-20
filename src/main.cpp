@@ -1,4 +1,5 @@
 #include "api.hpp" // IWYU pragma: keep
+#include "autons.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -12,13 +13,17 @@
  * to keep execution time for this mode under a few seconds.
  */
 
+bool changed = false;
 pros::Task limit_switch_task([]() {
   while (true) {
     if (StratusQuo::limit_switch.get_new_press()) {
       master.rumble("-");
       set_clamp = true;
+      changed = true;
     }
     StratusQuo::clamp.set(set_clamp);
+    if(changed) pros::delay(1000);
+    changed = false;
     pros::delay(10);
   }
 });
@@ -94,7 +99,7 @@ void autonomous() {
   to be consistent
   */
 
-  /*
+  //*
   // Uncomment this to use the auton selector
   if(selector.get_auton())
   {
@@ -106,7 +111,7 @@ void autonomous() {
     chassis.pid_wait();
   }// */
   // Uncomment to edit a specific auton.
-  red_side_goal_rush();
+  // red_side_ring_rush();
 }
 
 /**

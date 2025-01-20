@@ -29,7 +29,7 @@ namespace StratusQuo
     inline void default_constants() {
         // P, I, D, and Start I
         // https://ez-robotics.github.io/EZ-Template/tutorials/tuning_constants
-        chassis.pid_heading_constants_set(10.6, 0, 40);
+        chassis.pid_heading_constants_set(9.95, 0, 40);
         chassis.pid_drive_constants_set(15, 0, 300);
         chassis.pid_turn_constants_set(2.95, 0, 20);
         chassis.pid_swing_constants_set(6, 0, 65);
