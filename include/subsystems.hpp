@@ -25,6 +25,7 @@ namespace StratusQuo
     inline ez::Piston doinker(doinker_port);
     inline pros::adi::DigitalIn limit_switch(ls_port);
     inline ez::Piston ring_rush_mech(ring_rush_port, false);
+    inline pros::Optical color_sensor(color_sensor_port);
 
     inline void default_constants() {
         // P, I, D, and Start I

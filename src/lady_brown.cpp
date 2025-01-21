@@ -36,11 +36,10 @@ int StratusQuo::Lady_Brown::brake()
     return 0;
 }
 
-// PTO Logic
+// TRUE = lady_brown is enabled
 int StratusQuo::Lady_Brown::set_pto(bool input)
 {
-    // intent - true == lb
-    _pto.set(input); // Check logic - should work?
+    _pto.set(input);
     return 0;
 }
 

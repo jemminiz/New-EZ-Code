@@ -13,18 +13,71 @@
  * to keep execution time for this mode under a few seconds.
  */
 
-bool changed = false;
 pros::Task limit_switch_task([]() {
+  pros::delay(2000); // EZ-Template Start
+  bool changed = false;
   while (true) {
     if (StratusQuo::limit_switch.get_new_press()) {
       master.rumble("-");
-      set_clamp = true;
+      StratusQuo::set_clamp = true;
       changed = true;
     }
-    StratusQuo::clamp.set(set_clamp);
+    StratusQuo::clamp.set(StratusQuo::set_clamp);
     if(changed) pros::delay(1000);
     changed = false;
     pros::delay(10);
+  }
+});
+
+pros::Task sorting_task([]()
+{
+  pros::delay(2000);  // Set EZ-Template calibrate before this function starts running
+  bool isColorSortEnabled = true;
+  while (true)
+  {
+    if (isColorSortEnabled)
+    {
+      auto values = StratusQuo::color_sensor.get_rgb();
+      bool bad_ring_detected;
+            
+      if (StratusQuo::team_color == StratusQuo::RED)
+      {  
+        bad_ring_detected = values.blue > 220 && values.red < 220; //red team
+        if (bad_ring_detected)
+        {
+          if (StratusQuo::intake.get_hook_motor().get_actual_velocity() < 100) StratusQuo::intake.get_hook_motor().move(0);
+          else
+          {
+            StratusQuo::intake.get_hook_motor().move(-127);
+            pros::delay(100);
+            StratusQuo::intake.get_hook_motor().move(0);
+          }
+        }
+      } 
+      else
+      {
+        bad_ring_detected = values.blue < 220 && values.red > 220; //blue team
+        if (bad_ring_detected)
+        {
+          if (StratusQuo::intake.get_hook_motor().get_actual_velocity() < 100) StratusQuo::intake.get_hook_motor().move(0);
+          else
+          {
+            StratusQuo::intake.get_hook_motor().move(-127);
+            pros::delay(100);
+            StratusQuo::intake.get_hook_motor().move(0);
+          }
+        }
+      }
+
+      // Update LED based on sorting status
+      StratusQuo::color_sensor.set_led_pwm(100); //if color sort on then led on
+    } 
+    else
+    {
+      // Turn off LED when sorting is disabled
+      StratusQuo::color_sensor.set_led_pwm(0);
+    }
+    pros::delay(ez::util::DELAY_TIME);
   }
 });
 
@@ -297,7 +350,7 @@ void opcontrol() {
       doinker_down = !doinker_down;
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::set_clamp = !StratusQuo::set_clamp;
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
