@@ -1,34 +1,26 @@
-name: Build Check for PROS
+name: Build
 
 on:
   push:
-    branches:
-      - '**'
+    branches: "**"
   pull_request:
-    branches:
-      - '**'
+    branches: "**"
+
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build PROS Project
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Step 2: Install PROS CLI
-      - name: Install PROS CLI
-        run: |
-          sudo apt update
-          sudo apt install -y python3 python3-pip
-          python3 -m pip install pros-cli  # Install latest version
+      - name: Run LemLib/pros-build
+        id: test
+        uses: LemLib/pros-build@v3.0.0
 
-      # Step 3: Verify PROS CLI installation
-      - name: Verify PROS installation
-        run: pros --version
-
-      # Step 4: Build the PROS project
-      - name: Build the project
-        run: pros make all
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.test.outputs.name }}
+          path: ${{ github.workspace }}/template/*
