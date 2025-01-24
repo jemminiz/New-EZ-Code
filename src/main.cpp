@@ -1,6 +1,8 @@
 #include "api.hpp" // IWYU pragma: keep
 #include "autons.hpp"
+#include "pros/misc.h"
 #include "robodash.hpp"
+#include "subsystems.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -17,7 +19,7 @@
 bool changed = false;
 pros::Task limit_switch_task([]() {
   while (true) {
-    if (StratusQuo::limit_switch.get_new_press()) {
+    if (StratusQuo::limit_switch.get_new_press() && StratusQuo::isAutoClampEnabled) {
       master.rumble("-");
       set_clamp = true;
       changed = true;
@@ -31,10 +33,10 @@ pros::Task limit_switch_task([]() {
 pros::Task sorting_task([]()
 {
   pros::delay(2000);  // Set EZ-Template calibrate before this function starts running
-  bool isColorSortEnabled = true;
+  StratusQuo::isColorSortEnabled = true;
   while (true)
   {
-    if (isColorSortEnabled)
+    if (StratusQuo::isColorSortEnabled)
     {
       auto values = StratusQuo::color_sensor.get_rgb();
       bool bad_ring_detected;
@@ -309,6 +311,15 @@ void opcontrol() {
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
 
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+      StratusQuo::isColorSortEnabled = !StratusQuo::isColorSortEnabled;
+      continue;
+    }
+    if(master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+      StratusQuo::isAutoClampEnabled = !StratusQuo::isAutoClampEnabled;
+      continue;
+    }
+
     // . . .
     // Put more user control code here!
     // . . .
@@ -360,6 +371,10 @@ void opcontrol() {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       StratusQuo::doinker.set(!doinker_down);
       doinker_down = !doinker_down;
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      StratusQuo::ring_rush_mech.set(!StratusQuo::ring_rush_mech.get());
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;

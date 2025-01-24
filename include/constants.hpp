@@ -23,4 +23,7 @@ namespace StratusQuo
         BLUE
     } Color;
     inline Color team_color = RED;
+
+    inline bool isColorSortEnabled = true;
+    inline bool isAutoClampEnabled = true;
 }
