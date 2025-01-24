@@ -8,7 +8,6 @@ namespace StratusQuo
     {
         public:
             Intake(int bottom_motor, int top_motor, uint8_t piston);
-            ~Intake();
             bool toggle();
             int move(int voltage);
             int brake();

@@ -1,12 +1,6 @@
 #include "intake.hpp"
 StratusQuo::Intake::Intake(int bottom, int top, uint8_t piston) : _bottom_motor(bottom), _top_motor(top), _piston(piston)
 {}
-StratusQuo::Intake::~Intake()
-{
-    delete &_bottom_motor;
-    delete &_top_motor;
-    delete &_piston;
-}
 
 bool StratusQuo::Intake::toggle()
 {
