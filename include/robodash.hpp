@@ -2,6 +2,7 @@
 #pragma once
 
 #include "autons.hpp"
+#include "constants.hpp"
 #include "robodash/api.h" // IWYU pragma: keep
 #include "robodash/views/console.hpp"
 
@@ -29,3 +30,10 @@ inline void debug()
   console.focus();
   console.print("Hello, world!");
 }
+
+inline rd::Selector color_selector
+{
+  {
+  {"Red", [](){ StratusQuo::team_color = StratusQuo::RED; }},
+  {"Blue", [](){ StratusQuo::team_color = StratusQuo::BLUE; }} }
+};

@@ -1,5 +1,6 @@
 #include "api.hpp" // IWYU pragma: keep
 #include "autons.hpp"
+#include "robodash.hpp"
 
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
@@ -92,6 +93,8 @@ void initialize() {
 
   chassis.drive_imu_calibrate(false);
   chassis.drive_sensor_reset();
+
+  color_selector.run_auton();
 
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
