@@ -23,7 +23,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y python3 python3-pip
-          python3 -m pip install pros-cli==4.1.1
+          python3 -m pip install pros-cli  # Install latest version
 
       # Step 3: Verify PROS CLI installation
       - name: Verify PROS installation
@@ -32,8 +32,3 @@ jobs:
       # Step 4: Build the PROS project
       - name: Build the project
         run: pros make all
-
-      # Optional: Step 5 - Verify PROS OKAPI version
-      - name: Verify OKAPI library version (if used)
-        run: |
-          grep 'okapilib' project.pros | grep -q '4.1.1' || echo "Warning: OKAPI version mismatch"
