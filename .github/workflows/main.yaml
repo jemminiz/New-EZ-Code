@@ -1,0 +1,39 @@
+name: Build Check for PROS
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: Build PROS Project
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install PROS CLI
+      - name: Install PROS CLI
+        run: |
+          sudo apt update
+          sudo apt install -y python3 python3-pip
+          python3 -m pip install pros-cli==4.1.1
+
+      # Step 3: Verify PROS CLI installation
+      - name: Verify PROS installation
+        run: pros --version
+
+      # Step 4: Build the PROS project
+      - name: Build the project
+        run: pros make all
+
+      # Optional: Step 5 - Verify PROS OKAPI version
+      - name: Verify OKAPI library version (if used)
+        run: |
+          grep 'okapilib' project.pros | grep -q '4.1.1' || echo "Warning: OKAPI version mismatch"
