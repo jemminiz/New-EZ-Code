@@ -27,6 +27,57 @@ pros::Task limit_switch_task([]() {
     pros::delay(10);
   }
 });
+pros::Task sorting_task([]()
+{
+  pros::delay(2000);  // Set EZ-Template calibrate before this function starts running
+  bool isColorSortEnabled = true;
+  while (true)
+  {
+    if (isColorSortEnabled)
+    {
+      auto values = StratusQuo::color_sensor.get_rgb();
+      bool bad_ring_detected;
+
+      console.println(std::to_string(values.red) + " " + std::to_string(values.green) + " " + std::to_string(values.blue));
+      console.print(std::to_string(bad_ring_detected));
+            
+      if (StratusQuo::team_color == StratusQuo::RED)
+      {  
+        bad_ring_detected = values.blue > 300; //red team
+        if (bad_ring_detected)
+        {
+          pros::delay(100);
+          StratusQuo::intake.get_hook_motor().move(-127);
+          pros::delay(200);
+          StratusQuo::intake.move(0);
+        }
+      } 
+      else
+      {
+        bad_ring_detected = values.red > 300; //blue team
+        if (bad_ring_detected)
+        {
+          pros::delay(100);
+          StratusQuo::intake.get_hook_motor().move(-127);
+          pros::delay(200);
+          StratusQuo::intake.move(0);
+        }
+      }
+
+      // Update LED based on sorting status
+      StratusQuo::color_sensor.set_led_pwm(100); //if color sort on then led on
+    } 
+    else
+    {
+      // Turn off LED when sorting is disabled
+      //StratusQuo::color_sensor.set_led_pwm(0);
+    }
+    StratusQuo::intake.get_hook_motor().move(hook_speed);
+    StratusQuo::intake.get_roller_motor().move(roller_speed);
+    pros::delay(ez::util::DELAY_TIME);
+    console.clear();
+  }
+});
 
 void initialize() {
   using namespace StratusQuo;
@@ -229,6 +280,8 @@ void opcontrol() {
   bool doinker_down = false;
   bool pto_enabled = false;
 
+  sorting_task.resume();
+
   while (true) {
     // PID Tuner
     // After you find values that you're happy with, you'll have to set them in auton.cpp
@@ -277,12 +330,21 @@ void opcontrol() {
       // Drivetrain working as it should I think?
     }
 
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      StratusQuo::intake.move(127);
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      StratusQuo::intake.move(-127);
-    } else
-      StratusQuo::intake.brake();
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
+    {
+      hook_speed = 127;
+      roller_speed = 127;
+    }
+    else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
+    {
+      hook_speed = -127;
+      roller_speed = -127;
+    }
+    else
+    {
+      roller_speed = 0;
+      hook_speed = 0;
+    }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       StratusQuo::lady_brown.toggle();

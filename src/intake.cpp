@@ -33,3 +33,12 @@ int StratusQuo::Intake::move_bottom_motor(int voltage)
     _bottom_motor.move(voltage);
     return 0;
 }
+
+pros::Motor &StratusQuo::Intake::get_hook_motor()
+{
+    return _top_motor;
+}
+pros::Motor &StratusQuo::Intake::get_roller_motor()
+{
+    return _bottom_motor;
+}

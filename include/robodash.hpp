@@ -27,5 +27,5 @@ inline rd::Console console("Debug console");
 inline void debug()
 {
   console.focus();
-  console.print("Hi guys!");
+  console.print("Hello, world!");
 }

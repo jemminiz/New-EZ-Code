@@ -22,3 +22,5 @@ void default_constants();
 void testing_pid_auto();
 
 inline bool set_clamp = false;
+inline int hook_speed = 0;
+inline int roller_speed = 0;
