@@ -1,5 +1,9 @@
+
 #include "api.hpp" // IWYU pragma: keep
 #include "autons.hpp"
+#include "constants.hpp"
+#include "intake.hpp"
+#include <atomic>
 #include "pros/misc.h"
 #include "robodash.hpp"
 #include "subsystems.hpp"
@@ -17,68 +21,46 @@
  */
 
 bool changed = false;
+
+/*
+pros::Task intake_task([]() {
+  while(true)
+  {
+    if(true)
+    {
+      double new_hook_speed = StratusQuo::hook_motor_speed.load();
+      double new_roller_speed = StratusQuo::roller_motor_speed.load();
+      StratusQuo::intake.get_hook_motor().move(StratusQuo::hook_motor_speed);
+      StratusQuo::intake.get_roller_motor().move(StratusQuo::roller_motor_speed);
+      if(StratusQuo::roller_motor_speed == StratusQuo::hook_motor_speed == 0) StratusQuo::intake.brake();
+      else if(StratusQuo::roller_motor_speed == 0) StratusQuo::intake.get_roller_motor().brake();
+      else if(StratusQuo::hook_motor_speed == 0) StratusQuo::intake.get_hook_motor().brake();
+      pros::delay(10);
+    }
+    else
+    {
+      pros::delay(300);
+      StratusQuo::intake.get_hook_motor().move(-127);
+      pros::delay(200);
+      StratusQuo::intake.get_hook_motor().move(0);
+      pros::delay(10);
+      StratusQuo::bad_color.store(!StratusQuo::bad_color.load());
+    }
+    StratusQuo::intake.set_piston(StratusQuo::is_intake_up.load());
+  }
+}); */
+
 pros::Task limit_switch_task([]() {
   while (true) {
     if (StratusQuo::limit_switch.get_new_press() && StratusQuo::isAutoClampEnabled) {
       master.rumble("-");
-      set_clamp = true;
+      StratusQuo::set_clamp = true;
       changed = true;
     }
-    StratusQuo::clamp.set(set_clamp);
+    StratusQuo::clamp.set(StratusQuo::set_clamp);
     if(changed) pros::delay(1000);
     changed = false;
-    pros::delay(10);
-  }
-});
-pros::Task sorting_task([]()
-{
-  pros::delay(2000);  // Set EZ-Template calibrate before this function starts running
-  StratusQuo::isColorSortEnabled = true;
-  while (true)
-  {
-    if (StratusQuo::isColorSortEnabled)
-    {
-      auto values = StratusQuo::color_sensor.get_rgb();
-      bool bad_ring_detected;
-
-      console.println(std::to_string(values.red) + " " + std::to_string(values.green) + " " + std::to_string(values.blue));
-      console.print(std::to_string(bad_ring_detected));
-            
-      if (StratusQuo::team_color == StratusQuo::RED)
-      {  
-        bad_ring_detected = values.blue > 300; //red team
-        if (bad_ring_detected)
-        {
-          pros::delay(100);
-          StratusQuo::intake.get_hook_motor().move(-127);
-          pros::delay(200);
-          StratusQuo::intake.move(0);
-        }
-      } 
-      else
-      {
-        bad_ring_detected = values.red > 300; //blue team
-        if (bad_ring_detected)
-        {
-          pros::delay(100);
-          StratusQuo::intake.get_hook_motor().move(-127);
-          pros::delay(200);
-          StratusQuo::intake.move(0);
-        }
-      }
-
-      // Update LED based on sorting status
-      StratusQuo::color_sensor.set_led_pwm(100); //if color sort on then led on
-    } 
-    else
-    {
-      // Turn off LED when sorting is disabled
-      //StratusQuo::color_sensor.set_led_pwm(0);
-    }
-    StratusQuo::intake.get_hook_motor().move(hook_speed);
-    StratusQuo::intake.get_roller_motor().move(roller_speed);
-    pros::delay(ez::util::DELAY_TIME);
-    console.clear();
+    pros::delay(75);
   }
 });
 
@@ -142,6 +124,8 @@ void autonomous() {
   // chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(pros::E_MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
 
+  //.resume();
+
   /*
   Odometry and Pure Pursuit are not magic
 
@@ -155,7 +139,7 @@ void autonomous() {
   to be consistent
   */
 
-  //*
+  /*
   // Uncomment this to use the auton selector
   if(selector.get_auton())
   {
@@ -167,7 +151,8 @@ void autonomous() {
     chassis.pid_wait();
   }// */
   // Uncomment to edit a specific auton.
-  // red_side_ring_rush();
+  solo_awp_left();
+  //six_ring_red();
 }
 
 /**
@@ -285,8 +270,7 @@ void opcontrol() {
   bool doinker_down = false;
   bool pto_enabled = false;
 
-  sorting_task.resume();
-
+  //sorting_task.suspend();
   while (true) {
     // PID Tuner
     // After you find values that you're happy with, you'll have to set them in auton.cpp
@@ -310,6 +294,8 @@ void opcontrol() {
     */
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
+
+    console.focus();
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       StratusQuo::isColorSortEnabled = !StratusQuo::isColorSortEnabled;
@@ -346,18 +332,25 @@ void opcontrol() {
 
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1))
     {
+      /*
       hook_speed = 127;
-      roller_speed = 127;
+      roller_speed = 127; */
+      //StratusQuo::intake_speed_set(127, 127);
+      StratusQuo::intake.move(127);
     }
     else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2))
     {
-      hook_speed = -127;
-      roller_speed = -127;
+      /* hook_speed = -127;
+      roller_speed = -127; */
+      //StratusQuo::intake_speed_set(-127, -127);
+      StratusQuo::intake.move(-127);
     }
     else
     {
-      roller_speed = 0;
-      hook_speed = 0;
+      /* roller_speed = 0;
+      hook_speed = 0; */
+      //StratusQuo::intake_speed_set(0, 0);
+      StratusQuo::intake.brake();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
@@ -377,7 +370,7 @@ void opcontrol() {
       StratusQuo::ring_rush_mech.set(!StratusQuo::ring_rush_mech.get());
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) set_clamp = !set_clamp;
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::set_clamp = !StratusQuo::set_clamp;
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

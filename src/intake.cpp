@@ -36,3 +36,7 @@ pros::Motor &StratusQuo::Intake::get_roller_motor()
 {
     return _bottom_motor;
 }
+void StratusQuo::Intake::set_piston(bool state)
+{
+    _piston.set(state);
+}

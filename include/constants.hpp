@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <atomic>
 namespace StratusQuo
 {
     const int bottom_intake_port = 15;
@@ -26,4 +27,32 @@ namespace StratusQuo
 
     inline bool isColorSortEnabled = true;
     inline bool isAutoClampEnabled = true;
+
+    const inline int RED_HUE_LOW = 0;
+    const inline int RED_HUE_HIGH = 20;
+    const inline int BLUE_HUE_LOW = 200;
+    const inline int BLUE_HUE_HIGH = 240;
+
+    inline std::atomic<bool> is_red(true);
+    inline std::atomic<bool> running_sort(true);
+    inline std::atomic<bool> set_clamp(false);
+    inline std::atomic<bool> bad_color(false);
+    inline std::atomic<bool> is_intake_up(false);
+    inline std::atomic<double> roller_motor_speed = 0;
+    inline std::atomic<double> hook_motor_speed = 0;
+
+    inline int intake_speed_set(double roller_speed, double hook_speed)
+    {
+        roller_motor_speed.store(roller_speed);
+        hook_motor_speed.store(hook_speed);
+        return 0;
+    }
+    inline int get_roller_speed()
+    {
+        return roller_motor_speed.load();
+    }
+    inline int get_hook_speed()
+    {
+        return hook_motor_speed.load();
+    }
 }

@@ -14,6 +14,7 @@ namespace StratusQuo
             int move_bottom_motor(int voltage);
             pros::Motor &get_hook_motor();
             pros::Motor &get_roller_motor();
+            void set_piston(bool state);
         private:
             pros::Motor _bottom_motor;
             pros::Motor _top_motor;

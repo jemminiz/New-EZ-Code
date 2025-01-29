@@ -18,7 +18,8 @@ inline rd::Selector selector(
   {"Blue Ring Rush", blue_side_ring_rush},
   {"Red Ring Rush", red_side_ring_rush},
   {"First Skills", first_autonomous_skills},
-  {"Second Skills", second_autonomous_skills}
+  {"Second Skills", second_autonomous_skills},
+  {"Six Ring Red", six_ring_red}
 });
 
 inline rd::Console console("Debug console");
