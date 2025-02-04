@@ -15,6 +15,13 @@ void half_awp();
 void awp_no_ring();
 void right_side_half_awp();
 void six_ring_red();
+void red_side_four_ring();
+void blue_side_four_ring();
+
+void red_negative_four_ring();
+void red_positive_four_ring();
+void blue_negative_four_ring();
+void blue_positive_four_ring();
 
 void first_autonomous_skills();
 void second_autonomous_skills();

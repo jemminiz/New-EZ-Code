@@ -15,8 +15,8 @@ namespace StratusQuo
     const uint8_t lady_brown_piston_port = 'f';
     const uint8_t pto = 'g';
     const uint8_t ls_port = 'c';
-    const uint8_t ring_rush_port = 'b';
-    const uint8_t doinker_port = 'd';
+    const uint8_t right_doinker_port = 'b';
+    const uint8_t left_doinker_port = 'd';
 
     typedef enum
     {

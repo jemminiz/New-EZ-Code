@@ -10,6 +10,10 @@ inline rd::Selector selector(
 {
   {"Solo AWP Left Side", solo_awp_left},
   {"Solo AWP Right Side", solo_awp_right},
+  {"Red Negative Four Ring", red_negative_four_ring},
+  {"Red Positive Four Ring", red_positive_four_ring},
+  {"Blue Negative Four Ring", blue_negative_four_ring},
+  {"Blue Positive Four Ring", blue_positive_four_ring},
   {"AWP No Second Goal", half_awp},
   {"AWP No Alliance Stake Stack", awp_no_ring},
   {"Right Half AWP", right_side_half_awp},
@@ -19,7 +23,6 @@ inline rd::Selector selector(
   {"Red Ring Rush", red_side_ring_rush},
   {"First Skills", first_autonomous_skills},
   {"Second Skills", second_autonomous_skills},
-  {"Six Ring Red", six_ring_red}
 });
 
 inline rd::Console console("Debug console");

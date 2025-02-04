@@ -1,6 +1,5 @@
 
 #include "api.hpp" // IWYU pragma: keep
-#include "autons.hpp"
 #include "constants.hpp"
 #include "intake.hpp"
 #include <atomic>
@@ -139,7 +138,7 @@ void autonomous() {
   to be consistent
   */
 
-  /*
+  //*
   // Uncomment this to use the auton selector
   if(selector.get_auton())
   {
@@ -147,11 +146,10 @@ void autonomous() {
   }
   else
   {
-    chassis.pid_drive_set(6_in, 110);
+    chassis.pid_drive_set(-6_in, 110);
     chassis.pid_wait();
   }// */
   // Uncomment to edit a specific auton.
-  solo_awp_left();
   //six_ring_red();
 }
 
@@ -267,7 +265,7 @@ void opcontrol() {
 
   StratusQuo::chassis.drive_brake_set(driver_preference_brake);
 
-  bool doinker_down = false;
+  bool left_doinker_down = false;
   bool pto_enabled = false;
 
   //sorting_task.suspend();
@@ -294,8 +292,6 @@ void opcontrol() {
     */
     StratusQuo::chassis.opcontrol_tank();  // Tank control
     StratusQuo::chassis.pto_toggle({StratusQuo::chassis.left_motors[2], StratusQuo::chassis.right_motors[2]}, pto_enabled);
-
-    console.focus();
 
     if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       StratusQuo::isColorSortEnabled = !StratusQuo::isColorSortEnabled;
@@ -362,12 +358,16 @@ void opcontrol() {
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      StratusQuo::doinker.set(!doinker_down);
-      doinker_down = !doinker_down;
+      StratusQuo::left_doinker.set(!left_doinker_down);
+      left_doinker_down = !left_doinker_down;
     }
 
     if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-      StratusQuo::ring_rush_mech.set(!StratusQuo::ring_rush_mech.get());
+      StratusQuo::right_doinker.set(!StratusQuo::right_doinker.get());
+    }
+
+    if(master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      StratusQuo::intake.toggle();
     }
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) StratusQuo::set_clamp = !StratusQuo::set_clamp;

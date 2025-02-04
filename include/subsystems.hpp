@@ -22,9 +22,9 @@ namespace StratusQuo
     inline Clamp clamp(clamp_port);
     inline Lady_Brown lady_brown(left_lb_port, right_lb_port, lb_rotation_port,
                                  lady_brown_piston_port, pto);
-    inline ez::Piston doinker(doinker_port);
+    inline ez::Piston left_doinker(left_doinker_port);
     inline pros::adi::DigitalIn limit_switch(ls_port);
-    inline ez::Piston ring_rush_mech(ring_rush_port, false);
+    inline ez::Piston right_doinker(right_doinker_port);
     inline pros::Optical color_sensor(color_sensor_port);
 
     inline void default_constants() {
