@@ -1,8 +1,10 @@
 
 #include "api.hpp" // IWYU pragma: keep
+#include "autons.hpp"
 #include "constants.hpp"
 #include "intake.hpp"
 #include <atomic>
+#include <string>
 #include "pros/misc.h"
 #include "robodash.hpp"
 #include "subsystems.hpp"
@@ -50,16 +52,19 @@ pros::Task intake_task([]() {
 }); */
 
 pros::Task limit_switch_task([]() {
-  while (true) {
-    if (StratusQuo::limit_switch.get_new_press() && StratusQuo::isAutoClampEnabled) {
+  while (true)
+  {
+    if (StratusQuo::limit_switch.get_new_press() && StratusQuo::isAutoClampEnabled.load()) {
       master.rumble("-");
-      StratusQuo::set_clamp = true;
+      StratusQuo::set_clamp.store(true);
       changed = true;
     }
     StratusQuo::clamp.set(StratusQuo::set_clamp);
     if(changed) pros::delay(1000);
     changed = false;
+    console.print(std::to_string(StratusQuo::chassis.drive_imu_get()));
     pros::delay(75);
+    console.clear();
   }
 });
 
@@ -138,7 +143,7 @@ void autonomous() {
   to be consistent
   */
 
-  //*
+  /*
   // Uncomment this to use the auton selector
   if(selector.get_auton())
   {
@@ -150,7 +155,7 @@ void autonomous() {
     chassis.pid_wait();
   }// */
   // Uncomment to edit a specific auton.
-  //six_ring_red();
+  red_positive_four_ring();
 }
 
 /**

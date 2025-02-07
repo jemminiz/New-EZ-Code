@@ -509,7 +509,6 @@ void solo_awp_right()
 void half_awp()
 {
   using namespace StratusQuo;
-  pros::delay(3000);
   lady_brown.set_pto(true);
   pros::delay(100);
   lady_brown.move(-127);
@@ -520,22 +519,22 @@ void half_awp()
 
   chassis.pid_drive_set(-24_in, 127);
   chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(45_deg, 127);
+  chassis.pid_turn_set(45_deg, 80);
   chassis.pid_wait();
-  chassis.pid_drive_set(-22_in, 110);
+  chassis.pid_drive_set(-22_in, 127);
   chassis.pid_wait_quick_chain();
   intake.get_hook_motor().move(-127);
   intake.get_roller_motor().move(127);
   pros::delay(100);
   set_clamp.store(true);
-  chassis.pid_turn_set(108_deg, 127);
+  chassis.pid_turn_set(108_deg, 80);
   chassis.pid_wait();
   intake.move(127);
   chassis.pid_drive_set(24_in, 127);
   chassis.pid_wait();
-  chassis.pid_turn_set(-28.5_deg, 127);
+  chassis.pid_turn_set(-28.5_deg, 80);
   chassis.pid_wait();
-  chassis.pid_drive_set(48.6_in, 110);
+  chassis.pid_drive_set(48.75_in, 127);
   intake.toggle();
   chassis.pid_wait_quick();
   intake.toggle();
@@ -794,36 +793,37 @@ void red_negative_four_ring()
 
   chassis.pid_drive_set(-6_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(-45_deg, 110);
-  chassis.pid_wait();
-  intake.toggle();
+  chassis.pid_turn_set(-90_deg, 80);
   intake.get_roller_motor().move(127);
-  chassis.pid_drive_set(12_in, 110);
   chassis.pid_wait();
   intake.toggle();
-  chassis.pid_turn_set(0_deg, 40);
+  chassis.pid_drive_set(16_in, 80, true);
+  chassis.pid_wait_quick();
+  intake.toggle();
+  pros::delay(200);
+  chassis.pid_turn_set(-2.5_deg, 30);
   chassis.pid_wait();
-  chassis.pid_drive_set(-24_in, 110);
+  chassis.pid_drive_set(-44_in, 110, true);
   chassis.pid_wait();
   set_clamp.store(true);
-  chassis.pid_turn_set(135_deg, 110);
-  chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 110);
+  intake.get_hook_motor().move(-127);
+  chassis.pid_turn_set(-180_deg, 80);
+  chassis.pid_wait_until(-160_deg);
   intake.move(127);
   chassis.pid_wait();
-  chassis.pid_turn_set(240_deg, 110);
+  chassis.pid_swing_set(ez::RIGHT_SWING, -235_deg, 110, 25);
   chassis.pid_wait();
-  right_doinker.set(true);
-  chassis.pid_drive_set(24_in, 110);
+  chassis.pid_drive_set(22_in, 110);
   chassis.pid_wait_quick();
-  chassis.pid_drive_set(-6_in, 110);
+  chassis.pid_drive_set(-12_in, 110);
+  chassis.pid_wait_quick();
+  chassis.pid_swing_set(ez::RIGHT_SWING, -420_deg, 70, -15);
   chassis.pid_wait();
-  right_doinker.set(false);
-  chassis.pid_turn_set(200_deg, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_swing_set(ez::LEFT_SWING, 380_deg, 110, 30);
+  chassis.pid_drive_set(48_in, 127);
   chassis.pid_wait();
+  lady_brown.toggle();
 }
+
 void red_positive_four_ring()
 {
   using namespace StratusQuo;
@@ -834,40 +834,95 @@ void red_positive_four_ring()
   lady_brown.move(127);
   pros::delay(325);
   lady_brown.set_pto(false);
-  
-  chassis.pid_drive_set(-6_in, 110);
-  chassis.pid_wait();
-  chassis.pid_turn_set(45_deg, 110);
-  chassis.pid_wait();
-  intake.toggle();
-  intake.get_roller_motor().move(127);
-  chassis.pid_drive_set(12_in, 110);
-  chassis.pid_wait();
-  intake.toggle();
-  chassis.pid_turn_set(0_deg, 40);
+
+  chassis.pid_drive_set(-24_in, 110);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(-42.5_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
-  chassis.pid_wait();
-  set_clamp.store(true);
+  chassis.pid_wait_quick();
+  intake.get_roller_motor().move(127);
   intake.get_hook_motor().move(-127);
-  chassis.pid_turn_set(-135_deg, 110);
+  pros::delay(100);
+  set_clamp.store(true);
+  chassis.pid_turn_set(-110_deg, 80);
+  chassis.pid_wait_until(-65_deg);
+  intake.brake();
   chassis.pid_wait();
   intake.move(127);
-  chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait();
-  chassis.pid_turn_set(-200_deg, 110); // Turn towards ladder
-  chassis.pid_wait();
-  chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait();
-  chassis.pid_turn_set(60_deg, 110); // Turn towards middle rings
-  chassis.pid_wait();
-  right_doinker.set(true);
-  chassis.pid_drive_set(24_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-18_in, 110); // Pull them back out of the ladder
+  chassis.pid_drive_set(36_in, 110);
   chassis.pid_wait();
 }
 void blue_negative_four_ring()
-{}
+{
+  using namespace StratusQuo;
+  lady_brown.set_pto(true);
+  pros::delay(100);
+  lady_brown.move(-127);
+  pros::delay(325);
+  lady_brown.move(127);
+  pros::delay(325);
+  lady_brown.set_pto(false);
+
+  chassis.pid_drive_set(-6_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90_deg, 80);
+  intake.get_roller_motor().move(127);
+  chassis.pid_wait();
+  intake.toggle();
+  chassis.pid_drive_set(16_in, 80, true);
+  chassis.pid_wait_quick();
+  intake.toggle();
+  pros::delay(200);
+  chassis.pid_turn_set(5_deg, 30);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-44_in, 110, true);
+  chassis.pid_wait();
+  set_clamp.store(true);
+  intake.get_hook_motor().move(-127);
+  chassis.pid_turn_set(180_deg, 80);
+  chassis.pid_wait_until(160_deg);
+  intake.move(127);
+  chassis.pid_wait();
+  chassis.pid_swing_set(ez::LEFT_SWING, 235_deg, 110, 25);
+  chassis.pid_wait();
+  chassis.pid_drive_set(26_in, 110); // TODO: Set up auton
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-12_in, 110);
+  chassis.pid_wait_quick();
+  chassis.pid_swing_set(ez::LEFT_SWING, 420_deg, 70, -15);
+  chassis.pid_wait();
+  chassis.pid_drive_set(48_in, 127);
+  chassis.pid_wait_until(24_in);
+  intake.get_hook_motor().brake();
+}
 void blue_positive_four_ring()
-{}
+{
+  using namespace StratusQuo;
+  lady_brown.set_pto(true);
+  pros::delay(100);
+  lady_brown.move(-127);
+  pros::delay(325);
+  lady_brown.move(127);
+  pros::delay(325);
+  lady_brown.set_pto(false);
+
+  chassis.pid_drive_set(-6_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-90_deg, 110);
+  intake.get_roller_motor().move(127);
+  chassis.pid_wait();
+  intake.toggle();
+  chassis.pid_drive_set(15_in, 110);
+  chassis.pid_wait();
+  intake.toggle();
+  pros::delay(200);
+  chassis.pid_turn_set(-2.5_deg, 30);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-44_in, 110, true);
+  chassis.pid_wait();
+  set_clamp.store(true);
+  intake.get_hook_motor().move(-127);
+  chassis.pid_turn_set(-90_deg, 110);
+  chassis.pid_wait();
+}

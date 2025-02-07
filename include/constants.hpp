@@ -25,8 +25,8 @@ namespace StratusQuo
     } Color;
     inline Color team_color = RED;
 
-    inline bool isColorSortEnabled = true;
-    inline bool isAutoClampEnabled = true;
+    inline std::atomic<bool> isColorSortEnabled = true;
+    inline std::atomic<bool> isAutoClampEnabled = true;
 
     const inline int RED_HUE_LOW = 0;
     const inline int RED_HUE_HIGH = 20;
