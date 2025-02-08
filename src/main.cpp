@@ -143,7 +143,7 @@ void autonomous() {
   to be consistent
   */
 
-  /*
+  //*
   // Uncomment this to use the auton selector
   if(selector.get_auton())
   {
@@ -155,7 +155,7 @@ void autonomous() {
     chassis.pid_wait();
   }// */
   // Uncomment to edit a specific auton.
-  red_positive_four_ring();
+  //red_positive_four_ring();
 }
 
 /**
