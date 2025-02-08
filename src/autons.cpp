@@ -620,21 +620,7 @@ void right_side_half_awp()
 void first_autonomous_skills()
 {
  using namespace StratusQuo;
-chassis.drive_angle_set(180_deg);
-chassis.pid_drive_set(-24_in, 60, true);
-chassis.pid_wait();
-set_clamp.store(true);
-pros::delay(100); 
-intake.move(127);
-chassis.pid_drive_set(24_in, 60, true);
-chassis.pid_wait();
-chassis.pid_turn_set(270_deg, 110, true);
-chassis.pid_wait();
-chassis.pid_drive_set(24_in, 60, true);
-chassis.pid_wait();
-chassis.pid_turn_set(360_deg, 110, true);
-chassis.pid_wait();
-chassis.pid_drive_set(48_in, 60, true);
+
 }
 
 void second_autonomous_skills()
@@ -646,26 +632,26 @@ void second_autonomous_skills()
   intake.brake();
   chassis.pid_drive_set(12_in, 60, true);
   chassis.pid_wait();
-  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_turn_set(90_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
   chassis.pid_wait();
   set_clamp.store(true);
   intake.move(-127);
-  chassis.pid_turn_set(-85_deg, 110);
+  chassis.pid_turn_set(-85_deg, 80);
   chassis.pid_wait();
   intake.move(127);
   chassis.pid_drive_set(20_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(-180_deg, 110);
+  chassis.pid_turn_set(-180_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(12_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(-45_deg, 110);
+  chassis.pid_turn_set(-45_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(45_deg, 110);
+  chassis.pid_turn_set(45_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
   intake.brake();
@@ -674,26 +660,26 @@ void second_autonomous_skills()
   intake.get_roller_motor().move(127);
   chassis.pid_drive_set(12_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(-88_deg, 110);
+  chassis.pid_turn_set(-88_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-80_in, 110);
   chassis.pid_wait();
   set_clamp.store(true);
   intake.move(-127);
-  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_turn_set(90_deg, 80);
   chassis.pid_wait();
   intake.move(127);
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(180_deg, 110);
+  chassis.pid_turn_set(180_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(45_deg, 110);
+  chassis.pid_turn_set(45_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(24_in, 110);
   chassis.pid_wait();
-  chassis.pid_turn_set(-15_deg, 110);
+  chassis.pid_turn_set(-15_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
   chassis.pid_wait();
@@ -704,7 +690,7 @@ void second_autonomous_skills()
   pros::delay(500);
   intake.get_roller_motor().move(127);
   chassis.pid_wait();
-  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_turn_set(90_deg, 80);
   chassis.pid_wait();
   chassis.pid_drive_set(-24_in, 110);
   chassis.pid_wait();
@@ -716,17 +702,27 @@ void second_autonomous_skills()
   chassis.pid_wait();
   chassis.pid_drive_set(-20_in, 110); // TODO: Set up auton
   chassis.pid_wait();
-  chassis.pid_turn_set(240_deg, 110);
+  chassis.pid_turn_set(60_deg, 80);
   chassis.pid_wait();
-  chassis.pid_drive_set(-36_in, 60);
+  intake.move(127);
+  chassis.pid_drive_set(36_in, 60);
+  chassis.pid_wait();
+  intake.get_hook_motor().brake();
+  chassis.pid_drive_set(-12_in, 110);
+  chassis.pid_wait();
+  chassis.pid_turn_set(240_deg, 80);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-12_in, 110);
   chassis.pid_wait();
   set_clamp.store(false);
   intake.move(-127);
   chassis.pid_drive_set(24_in, 60);
   chassis.pid_wait();
-  chassis.pid_turn_set(90_deg, 110);
+  chassis.pid_turn_set(90_deg, 80);
   chassis.pid_wait();
-  chassis.pid_drive_set(-60_in, 110);  
+  chassis.pid_drive_set(-60_in, 110);
+  chassis.pid_wait();
+  set_clamp.store(true);
 }
 
 void six_ring_red()
